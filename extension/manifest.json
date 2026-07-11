@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "WireGuardExt — VPN solo para el navegador",
+  "version": "0.1.0",
+  "description": "Enruta únicamente el tráfico de este navegador por un túnel WireGuard (vía wireproxy userspace), sin afectar al resto del sistema.",
+  "default_locale": "es",
+
+  "permissions": [
+    "proxy",
+    "storage",
+    "nativeMessaging"
+  ],
+  "host_permissions": [],
+
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "WireGuardExt",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

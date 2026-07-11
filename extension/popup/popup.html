@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>WireGuardExt</h1>
+    <div id="status-badge" class="badge badge-off">Desconectado</div>
+  </header>
+
+  <div class="body">
+    <label class="field-label" for="profile-select">Perfil</label>
+    <select id="profile-select" class="select"></select>
+
+    <button id="btn-toggle" class="btn-toggle" disabled>
+      <span class="dot"></span>
+      <span class="label">Conectar</span>
+    </button>
+
+    <div id="meta" class="meta hidden"></div>
+
+    <div id="error" class="error hidden"></div>
+  </div>
+
+  <footer class="footer">
+    <button id="btn-options" class="link">Configurar perfiles</button>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

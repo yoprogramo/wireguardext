@@ -1,0 +1,9 @@
+{
+  "name": "com.wireguardext.host",
+  "description": "Host de WireGuardExt: ejecuta wireproxy en espacio de usuario para enrutar el tráfico del navegador por WireGuard.",
+  "path": "__HOST_PATH_PLACEHOLDER__",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://__EXTENSION_ID_PLACEHOLDER__/"
+  ]
+}

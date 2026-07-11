@@ -1,0 +1,19 @@
+# Binarios compilados del host
+host/wireguardext-host
+host/wireguardext-host.exe
+host/host
+
+# Go
+vendor/
+
+# Salida del empaquetado
+dist/
+
+# Metadato interno de herramientas
+.zcode/
+
+# macOS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

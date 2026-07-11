@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>WireGuardExt — Configuración</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>WireGuardExt</h1>
+    <p class="subtitle">Gestiona tus perfiles VPN de WireGuard</p>
+  </header>
+
+  <main>
+    <!-- Lista de perfiles existentes -->
+    <section class="profiles-section">
+      <div class="section-head">
+        <h2>Perfiles</h2>
+        <div class="section-actions">
+          <button id="btn-import" class="btn btn-ghost" title="Importar desde .conf de WireGuard">Importar .conf</button>
+          <input type="file" id="import-file" accept=".conf" multiple hidden />
+          <button id="btn-new" class="btn btn-primary">+ Nuevo perfil</button>
+        </div>
+      </div>
+      <ul id="profile-list" class="profile-list">
+        <!-- Rellenado por JS -->
+      </ul>
+      <p id="empty-hint" class="empty-hint hidden">
+        Aún no tienes perfiles. Crea uno con «+ Nuevo perfil» o importa un .conf.
+      </p>
+    </section>
+
+    <!-- Formulario de alta/edición (oculto por defecto) -->
+    <section id="form-section" class="form-section hidden">
+      <h2 id="form-title">Nuevo perfil</h2>
+      <form id="profile-form" novalidate>
+        <input type="hidden" id="id" />
+
+        <div class="field">
+          <label for="name">Nombre del perfil</label>
+          <input type="text" id="name" placeholder="Ej. Trabajo, Casa..." />
+          <small class="error" data-for="name"></small>
+        </div>
+
+        <fieldset>
+          <legend>Interfaz</legend>
+
+          <div class="field">
+            <label for="privateKey">Clave privada (PrivateKey)</label>
+            <input type="text" id="privateKey" placeholder="base64 de 32 bytes" autocomplete="off" spellcheck="false" />
+            <small class="error" data-for="privateKey"></small>
+          </div>
+
+          <div class="field">
+            <label for="address">Dirección del túnel (Address)</label>
+            <input type="text" id="address" placeholder="10.0.0.2/32" spellcheck="false" />
+            <small class="error" data-for="address"></small>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="dns">DNS <span class="opt">(opcional)</span></label>
+              <input type="text" id="dns" placeholder="1.1.1.1" spellcheck="false" />
+              <small class="error" data-for="dns"></small>
+            </div>
+            <div class="field">
+              <label for="mtu">MTU <span class="opt">(opcional)</span></label>
+              <input type="number" id="mtu" placeholder="1280" min="576" max="65535" />
+              <small class="error" data-for="mtu"></small>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Peer remoto</legend>
+
+          <div class="field">
+            <label for="publicKey">Clave pública del peer (PublicKey)</label>
+            <input type="text" id="publicKey" placeholder="base64 de 32 bytes" autocomplete="off" spellcheck="false" />
+            <small class="error" data-for="publicKey"></small>
+          </div>
+
+          <div class="field">
+            <label for="endpoint">Endpoint (host:puerto UDP)</label>
+            <input type="text" id="endpoint" placeholder="vpn.midominio.com:51820" spellcheck="false" />
+            <small class="error" data-for="endpoint"></small>
+          </div>
+
+          <div class="field">
+            <label for="allowedIPs">AllowedIPs</label>
+            <input type="text" id="allowedIPs" placeholder="0.0.0.0/0" spellcheck="false" />
+            <small class="hint">Usa <code>0.0.0.0/0</code> para enrutar todo el tráfico.</small>
+            <small class="error" data-for="allowedIPs"></small>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="presharedKey">PresharedKey <span class="opt">(opcional)</span></label>
+              <input type="text" id="presharedKey" placeholder="base64 de 32 bytes" autocomplete="off" spellcheck="false" />
+              <small class="error" data-for="presharedKey"></small>
+            </div>
+            <div class="field">
+              <label for="persistentKeepalive">Keepalive <span class="opt">(opcional)</span></label>
+              <input type="number" id="persistentKeepalive" placeholder="25" min="0" max="65535" />
+              <small class="error" data-for="persistentKeepalive"></small>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="button" id="btn-cancel" class="btn btn-ghost">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>
