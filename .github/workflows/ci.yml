@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # --- Validación del host Go ---
+  host:
+    name: Host (Go ${{ matrix.go }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.24", stable]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: host/go.sum
+
+      - name: go vet
+        working-directory: host
+        run: go vet ./...
+
+      - name: go build
+        working-directory: host
+        run: go build -o /dev/null .
+
+      - name: gofmt check
+        run: |
+          unformatted=$(gofmt -l host/*.go)
+          if [ -n "$unformatted" ]; then
+            echo "Hay ficheros Go sin formatear:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Smoke test del protocolo Native Messaging
+        run: python3 build/smoke-test.py
+
+  # --- Validación de la extensión (JS + manifest) ---
+  extension:
+    name: Extension (JS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Sintaxis JS (node --check)
+        run: |
+          set -e
+          for f in extension/lib/*.js extension/popup/popup.js extension/options/options.js extension/background/service-worker.js; do
+            node --check "$f"
+            echo "  ok  $f"
+          done
+
+      - name: JSON válido
+        run: |
+          python3 -c "import json; json.load(open('extension/manifest.json'))"
+          python3 -c "import json; json.load(open('install/com.wireguardext.host.json'))"
+
+      - name: Empaquetar extensión (zip)
+        run: |
+          mkdir -p dist
+          cd extension && zip -qr ../dist/wireguardext-extension.zip .
+          cd ..
+          python3 -c "import zipfile; z=zipfile.ZipFile('dist/wireguardext-extension.zip'); print('Archivos en el zip:', len(z.namelist()))"

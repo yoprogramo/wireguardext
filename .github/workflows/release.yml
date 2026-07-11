@@ -1,0 +1,61 @@
+name: Release
+
+# Se activa al publicar un tag v* (ej. v0.1.0).
+# Compila el host para las 6 plataformas, empaqueta la extensión y publica
+# todo como artefactos de una GitHub Release.
+#
+# Uso local:
+#   git tag v0.1.0
+#   git push origin v0.1.0
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write   # necesario para crear la release y subir assets
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache-dependency-path: host/go.sum
+
+      - name: Versión del tag
+        id: rel
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Empaquetar todo (host cross-compilado + extensión)
+        run: ./build/package.sh
+
+      - name: Listar artefactos generados
+        run: ls -lh dist/
+
+      - name: Smoke test del binario linux-amd64
+        run: |
+          # Extrae el binario del tar.gz y le pasa el smoke test.
+          mkdir -p /tmp/smoke
+          tar xzf dist/wireguardext-host-linux-amd64-v${{ steps.rel.outputs.version }}.tar.gz -C /tmp/smoke
+          python3 build/smoke-test.py /tmp/smoke/wireguardext-host
+
+      - name: Crear GitHub Release y subir assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/wireguardext-extension-v${{ steps.rel.outputs.version }}.zip
+            dist/wireguardext-host-linux-amd64-v${{ steps.rel.outputs.version }}.tar.gz
+            dist/wireguardext-host-linux-arm64-v${{ steps.rel.outputs.version }}.tar.gz
+            dist/wireguardext-host-darwin-amd64-v${{ steps.rel.outputs.version }}.tar.gz
+            dist/wireguardext-host-darwin-arm64-v${{ steps.rel.outputs.version }}.tar.gz
+            dist/wireguardext-host-windows-amd64-v${{ steps.rel.outputs.version }}.zip
+            dist/wireguardext-host-windows-arm64-v${{ steps.rel.outputs.version }}.zip
