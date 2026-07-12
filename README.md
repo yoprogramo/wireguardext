@@ -10,24 +10,24 @@ Para ello usa [wireproxy](https://github.com/windtf/wireproxy), un cliente WireG
 
 ```
 ┌─ Extensión MV3 ──────────────────────────────┐
-│  • Página de opciones: crea/edita N perfiles  │
-│  • Popup: conectar/desconectar + estado        │
-│  • chrome.proxy.settings → 127.0.0.1:<SOCKS5> │
-│  • connectNative ↔ host Go                     │
-└───────────────────────┬───────────────────────┘
+│  • Página de opciones: crea/edita N perfiles │
+│  • Popup: conectar/desconectar + estado      │
+│  • chrome.proxy.settings → 127.0.0.1:<SOCKS5>│
+│  • connectNative ↔ host Go                   │
+└───────────────────────┬──────────────────────┘
                         │ Native Messaging (stdin/stdout)
 ┌───────────────────────▼───────────────────────┐
-│  Host Go (native messaging host)               │
-│  • Genera config en memoria                    │
-│  • Arranca/para wireproxy como librería        │
-│  • Expone SOCKS5 en 127.0.0.1                  │
+│  Host Go (native messaging host)              │
+│  • Genera config en memoria                   │
+│  • Arranca/para wireproxy como librería       │
+│  • Expone SOCKS5 en 127.0.0.1                 │
 └───────────────────────┬───────────────────────┘
                         │ usa como librería
 ┌───────────────────────▼───────────────────────┐
-│  wireproxy (userspace, sin root)               │
-│  • Túnel WireGuard → UDP al endpoint del peer  │
-│  • SOCKS5 local expuesto al navegador          │
-└────────────────────────────────────────────────┘
+│  wireproxy (userspace, sin root)              │
+│  • Túnel WireGuard → UDP al endpoint del peer │
+│  • SOCKS5 local expuesto al navegador         │
+└───────────────────────────────────────────────┘
 ```
 
 Solo el navegador pasa por la VPN; el resto de las conexiones del sistema quedan intactas.
