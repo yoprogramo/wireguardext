@@ -34,45 +34,90 @@ Solo el navegador pasa por la VPN; el resto de las conexiones del sistema quedan
 
 ## Requisitos
 
-- **Go 1.24+** (solo para compilar el host; el usuario final solo necesita el binario ya compilado).
-- **Chrome / Chromium / Edge** con soporte MV3.
+- **Chrome / Chromium / Edge** (u otro navegador basado en Chromium con soporte MV3).
 - Un **servidor WireGuard** remoto funcional (con su peer configurado).
 
-## Instalación
+> No necesitas instalar Go ni compilar nada: las [releases](https://github.com/yoprogramo/wireguardext/releases) incluyen binarios del host ya compilados para cada plataforma.
 
-### 1. Construir el host nativo
+## Instalación (usuario final)
+
+Esta vía usa los binarios publicados en la página de [releases](https://github.com/yoprogramo/wireguardext/releases). No requiere compilar nada.
+
+### 1. Cargar la extensión y obtener su ID
+
+1. Ve a [la última release](https://github.com/yoprogramo/wireguardext/releases/latest) y descarga `wireguardext-extension-vX.Y.Z.zip`.
+2. Descomprímelo en una carpeta permanente (por ejemplo `~/wireguardext-extension/`). No la borres después: Chrome la necesita.
+3. Abre `chrome://extensions`, activa el **modo desarrollador** y pulsa **Cargar descomprimida** → selecciona la carpeta del paso anterior.
+4. Copia el **ID** que aparece bajo el nombre de la extensión (32 caracteres). Lo necesitarás en el paso 2.
+
+### 2. Descargar y registrar el host nativo
+
+Descarga de [la misma release](https://github.com/yoprogramo/wireguardext/releases/latest) el paquete del host correspondiente a tu sistema operativo y arquitectura:
+
+| Sistema | Arquitectura | Paquete |
+|---|---|---|
+| Linux | x86_64 | `wireguardext-host-linux-amd64-vX.Y.Z.tar.gz` |
+| Linux | ARM64 | `wireguardext-host-linux-arm64-vX.Y.Z.tar.gz` |
+| macOS (Intel) | x86_64 | `wireguardext-host-darwin-amd64-vX.Y.Z.tar.gz` |
+| macOS (Apple Silicon) | ARM64 | `wireguardext-host-darwin-arm64-vX.Y.Z.tar.gz` |
+| Windows | x86_64 | `wireguardext-host-windows-amd64-vX.Y.Z.zip` |
+| Windows | ARM64 | `wireguardext-host-windows-arm64-vX.Y.Z.zip` |
+
+Cada paquete contiene: el binario del host, el instalador y el manifest de Native Messaging.
+
+**Linux / macOS** — extrae y ejecuta el instalador pasando el ID de la extensión:
+
+```bash
+tar xzf wireguardext-host-linux-amd64-vX.Y.Z.tar.gz
+./install.sh <ID_DE_LA_EXTENSION>
+```
+
+El instalador coloca el binario en `~/.local/share/wireguardext/`, genera el manifest de Native Messaging y lo registra en Chrome, Chromium, Edge, Brave y Vivaldi (los que detecte). No requiere root.
+
+**Windows** (PowerShell) — descomprime el zip y ejecuta:
+
+```powershell
+.\install.ps1 -ExtensionId <ID_DE_LA_EXTENSION>
+```
+
+Registra el manifest en `HKCU` (no requiere administrador) para Chrome y Edge.
+
+Una vez completados ambos pasos (extensión cargada + host registrado con su ID), ya puedes usar WireGuardExt.
+
+---
+
+## Instalación (desarrollo)
+
+Si prefieres construir desde el código fuente (para contribuir o empaquetar tú mismo):
+
+### Requisitos adicionales
+
+- **Go 1.24+** para compilar el host.
+
+### Compilar el host
 
 ```bash
 cd host
 go build -o wireguardext-host .
 ```
 
-### 2. Registrar el native messaging host
+### Registrar el host
 
-#### Linux
+Usa los instaladores del repositorio (buscarán el binario recién compilado en `host/`):
 
 ```bash
+# Linux / macOS
 ./install/install.sh <ID_DE_LA_EXTENSION>
-```
 
-El instalador coloca el binario en `~/.local/share/wireguardext/`, genera el manifest de Native Messaging y lo registra en Chrome, Chromium, Edge, Brave y Vivaldi (los que detecte). No requiere root.
-
-#### Windows (PowerShell)
-
-```powershell
+# Windows (PowerShell)
 .\install\install.ps1 -ExtensionId <ID_DE_LA_EXTENSION>
 ```
 
-Registra el manifest en `HKCU` (no requiere administrador) para Chrome y Edge.
+### Cargar la extensión
 
-> **¿De dónde sale el ID de la extensión?** Carga la extensión sin empaquetar en `chrome://extensions` (modo desarrollador) y copia el ID que aparece.
+Abre `chrome://extensions`, activa el **modo desarrollador**, **Cargar descomprimida** → selecciona la carpeta `extension/`. Copia el ID y úsalo en el instalador del host.
 
-### 3. Cargar la extensión
-
-1. Abre `chrome://extensions`.
-2. Activa el **modo desarrollador**.
-3. **Cargar descomprimida** → selecciona la carpeta `extension/`.
-4. Copia el **ID** de la extensión y úsalo en el instalador del host (paso 2).
+> Para reempaquetar todo para distribución, consulta [Empaquetado para distribución](#empaquetado-para-distribución).
 
 ## Uso
 
