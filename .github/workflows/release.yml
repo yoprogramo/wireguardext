@@ -1,12 +1,12 @@
 name: Release
 
-# Se activa al publicar un tag v* (ej. v0.1.1).
+# Se activa al publicar un tag v* (ej. v0.1.2).
 # Compila el host para las 6 plataformas, empaqueta la extensión y publica
 # todo como artefactos de una GitHub Release.
 #
 # Uso local:
-#   git tag v0.1.1
-#   git push origin v0.1.1
+#   git tag v0.1.2
+#   git push origin v0.1.2
 
 on:
   push:

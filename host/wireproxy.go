@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"net"
 	"net/netip"
@@ -145,6 +147,15 @@ func buildConfiguration(p *Profile, socksPort int) (*wp.Configuration, error) {
 		return nil, fmt.Errorf("falta Address")
 	}
 
+	// Las claves del .conf (y de nuestra UI) vienen en base64, pero la
+	// interfaz IPC UAPI de WireGuard espera hex (private_key=… en
+	// wireproxy.CreateIPCRequest). Hay que convertir, igual que hace
+	// wireproxy al leer un .conf (config.go::encodeBase64ToHex).
+	secretHex, err := base64KeyToHex(p.Interface.PrivateKey, "PrivateKey")
+	if err != nil {
+		return nil, err
+	}
+
 	addrs, err := p.toWireguardDeviceAddresses()
 	if err != nil {
 		return nil, fmt.Errorf("Address inválida %q: %w", p.Interface.Address, err)
@@ -172,6 +183,20 @@ func buildConfiguration(p *Profile, socksPort int) (*wp.Configuration, error) {
 		return nil, fmt.Errorf("falta Endpoint del peer")
 	}
 
+	publicHex, err := base64KeyToHex(p.Peer.PublicKey, "PublicKey")
+	if err != nil {
+		return nil, err
+	}
+	// PreSharedKey es opcional; si no viene, wireproxy exige el valor
+	// "todo ceros" en hex (lo normaliza en config.go::ParsePeer).
+	presharedHex := "0000000000000000000000000000000000000000000000000000000000000000"
+	if p.Peer.PresharedKey != "" {
+		presharedHex, err = base64KeyToHex(p.Peer.PresharedKey, "PreSharedKey")
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	allowedStr := p.Peer.AllowedIPs
 	if allowedStr == "" {
 		allowedStr = "0.0.0.0/0"
@@ -182,15 +207,15 @@ func buildConfiguration(p *Profile, socksPort int) (*wp.Configuration, error) {
 	}
 
 	peer := wp.PeerConfig{
-		PublicKey:    p.Peer.PublicKey,
-		PreSharedKey: p.Peer.PresharedKey,
+		PublicKey:    publicHex,
+		PreSharedKey: presharedHex,
 		Endpoint:     strPtr(p.Peer.Endpoint),
 		KeepAlive:    p.Peer.PersistentKeepalive,
 		AllowedIPs:   []netip.Prefix{allowedPrefix},
 	}
 
 	deviceConf := &wp.DeviceConfig{
-		SecretKey: p.Interface.PrivateKey,
+		SecretKey: secretHex,
 		Endpoint:  addrs,
 		Peers:     []wp.PeerConfig{peer},
 		DNS:       dnsAddrs,
@@ -209,3 +234,17 @@ func buildConfiguration(p *Profile, socksPort int) (*wp.Configuration, error) {
 }
 
 func strPtr(s string) *string { return &s }
+
+// base64KeyToHex decodifica una clave WireGuard en base64 (44 caracteres, 32
+// bytes) y la devuelve en hexadecimal, que es el formato que exige la IPC UAPI
+// de WireGuard. fieldName solo se usa para el mensaje de error.
+func base64KeyToHex(b64, fieldName string) (string, error) {
+	decoded, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil {
+		return "", fmt.Errorf("%s no es base64 válido: %w", fieldName, err)
+	}
+	if len(decoded) != 32 {
+		return "", fmt.Errorf("%s debe tener 32 bytes tras decodificar base64 (tiene %d)", fieldName, len(decoded))
+	}
+	return hex.EncodeToString(decoded), nil
+}
