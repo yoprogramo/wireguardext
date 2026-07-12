@@ -127,15 +127,15 @@ El host se compila con `CGO_ENABLED=0` (totalmente estático) y `-trimpath -ldfl
 El repositorio incluye dos workflows en `.github/workflows/`:
 
 - **`ci.yml`** — en cada push a `main` o PR: `go vet` + build + `gofmt` check del host, smoke test del protocolo Native Messaging, validación de sintaxis JS y JSON, y empaquetado de prueba de la extensión. Ejecuta el host en Go 1.24 y la última estable.
-- **`release.yml`** — se dispara al publicar un tag `v*` (p. ej. `v0.1.0`): compila el host para las 6 plataformas, empaqueta la extensión, corre el smoke test sobre el binario de Linux y **crea una GitHub Release** con todos los artefactos adjuntos y notas autogeneradas desde los commits.
+- **`release.yml`** — se dispara al publicar un tag `v*` (p. ej. `v0.1.1`): compila el host para las 6 plataformas, empaqueta la extensión, corre el smoke test sobre el binario de Linux y **crea una GitHub Release** con todos los artefactos adjuntos y notas autogeneradas desde los commits.
 
 ### Publicar una release
 
 ```bash
 # 1. Asegúrate de que la versión en extension/manifest.json está actualizada.
 # 2. Etiqueta y empuja el tag:
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 El workflow crea automáticamente la release en https://github.com/yoprogramo/wireguardext/releases con los binarios descargables. No hace falta ejecutar `build/package.sh` a mano.
