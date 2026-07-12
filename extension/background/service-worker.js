@@ -29,19 +29,45 @@ chrome.runtime.onStartup.addListener(() => {
 native.init();
 reconcileAfterStartup();
 
-/** Tras revivir el SW, averigua si el host sigue con un túnel activo y sincroniza. */
+/**
+ * Tras revivir el SW, reconcilia el estado persistido (storage) con el estado
+ * real del host y la configuración de proxy del navegador. Resuelve las
+ * inconsistencias que surgen cuando el SW muere a mitad de una operación.
+ *
+ * Combinaciones posibles:
+ *   storage.connected | host.running | acción
+ *   ------------------+--------------+------------------------------------------
+ *   true              | true         | OK: reaplicar proxy (por si el SW murió)
+ *   true              | false        | el túnel se cayó: limpiar estado + proxy
+ *   false             | true         * TÚNEL HUÉRFANO: el usuario se desconectó
+ *                                   *   mientras el SW estaba muerto y el stop no
+ *                                   *   llegó. Forzar stop y limpiar.
+ *   false             | false        | OK: limpiar por seguridad
+ */
 async function reconcileAfterStartup() {
   // Dar un margen breve para que la conexión nativa se establezca.
   await sleep(500);
   try {
-    const st = await native.status();
-    if (st.running && st.socksPort) {
-      // El túnel sigue vivo: reaplicar proxy y sincronizar estado.
+    const st = await native.status().catch(() => null);
+    const state = await storage.getState();
+    const hostRunning = !!(st && st.running && st.socksPort);
+
+    if (state.connected && hostRunning) {
+      // Caso nominal: el usuario quería estar conectado y el túnel vive.
       await applyProxy(st.socksPort);
       await storage.setState({ connected: true, proxyPort: st.socksPort });
-    } else {
-      // El túnel no está activo: asegurar que el estado y el proxy están limpios.
+    } else if (state.connected && !hostRunning) {
+      // El túnel murió (caída del host, reinicio del equipo, etc.).
       await storage.setState({ connected: false, proxyPort: null, activeProfileId: null });
+      await clearProxy();
+    } else if (!state.connected && hostRunning) {
+      // Túnel huérfano: el usuario se desconectó pero el stop no llegó al host.
+      console.warn("Detectado túnel huérfano: forzando stop en el host.");
+      await native.stop().catch(() => {});
+      await clearProxy();
+      await storage.setState({ connected: false, proxyPort: null, activeProfileId: null });
+    } else {
+      // Ambos en false: asegurar que el proxy está limpio.
       await clearProxy();
     }
   } catch (e) {
