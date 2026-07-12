@@ -87,6 +87,25 @@ Registra el manifest en `HKCU` (no requiere administrador) para Chrome y Edge.
 4. Pulsa el icono de la extensión → selecciona el perfil → **Conectar**.
 5. Verifica en `https://ifconfig.me` que tu IP cambió.
 
+## Solución de problemas
+
+### Mi LAN doméstica y la red del servidor usan la misma subred (p. ej. ambas `192.168.1.0/24`)
+
+Este es el caso clásico en el que una VPN WireGuard **a nivel de sistema** falla: la tabla de rutas del cliente considera que la IP destino (p. ej. `192.168.1.50` en la oficina) pertenece a la red local y el paquete nunca sale del router doméstico, por lo que no llega nunca al servidor.
+
+Con **WireGuardExt esto funciona sin configuración adicional**, porque el túnel **no** es una interfaz de red del sistema. El navegador envía todo su tráfico a un proxy SOCKS5 local (`127.0.0.1`) gestionado por wireproxy, y es este quien lo mete cifrado en el túnel UDP hacia el endpoint WireGuard. La decisión de enrutamiento la toma wireproxy **dentro** del túnel, no el sistema operativo del cliente, así que la colisión de subredes del cliente es irrelevante: el paquete se descifra en el lado del servidor, donde esa IP sí es la red correcta.
+
+Consecuencias a tener en cuenta:
+
+- **Solo el navegador** pasa por el túnel. El resto de apps del equipo siguen usando la red doméstica directa (no hay interfaz WG a nivel sistema, precisamente para evitar la colisión).
+- Usa la **IP literal** (`http://192.168.1.50`) en la barra de direcciones. Si además quieres resolver nombres internos, pon como **DNS** de la interfaz (en el perfil) el servidor DNS de la oficina; así los nombres `host.local` también resolverán a través del túnel.
+- `AllowedIPs = 0.0.0.0/0` (lo habitual) ya es correcto: no hay que cambiarlo.
+- El **servidor** debe permitir reenviar ese tráfico hacia su LAN (`net.ipv4.ip_forward=1`) y que la máquina destino tenga como gateway al servidor (o SNAT en este). Esa parte es configuración del lado del servidor, no de la extensión.
+
+### La conexión falla con `encoding/hex: invalid byte`
+
+Las claves del `.conf` están en base64 y la extensión/host ya las convierten al formato hex que exige la IPC de WireGuard. Si ves este error, asegúrate de estar usando un binario del host **v0.1.2 o superior** (las versiones anteriores pasaban la clave en base64 sin convertir).
+
 ## Estructura del proyecto
 
 ```
