@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title data-i18n="onboarding_title">Install the host component</title>
+  <link rel="stylesheet" href="onboarding.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1 data-i18n="onboarding_title">Install the host component</h1>
+    <p class="intro" data-i18n="onboarding_intro"></p>
+  </header>
+
+  <main class="steps">
+    <section class="step">
+      <h2 data-i18n="onboarding_step1_title">1. Download</h2>
+      <p data-i18n="onboarding_step1_desc"></p>
+      <a id="releases-link" class="btn btn-primary" target="_blank" rel="noopener"
+         data-i18n="onboarding_releases_btn">Open the releases page</a>
+    </section>
+
+    <section class="step">
+      <h2 data-i18n="onboarding_step2_title">2. Decompress</h2>
+      <!-- Se rellena según el SO detectado por JS -->
+      <p id="step2-desc" class="mono-line"></p>
+    </section>
+
+    <section class="step">
+      <h2 data-i18n="onboarding_step3_title">3. Run installer</h2>
+      <p id="step3-desc" class="mono-line"></p>
+    </section>
+
+    <section class="step extid-box">
+      <label for="ext-id" data-i18n="onboarding_extid_label"></label>
+      <input id="ext-id" class="ext-id" readonly />
+      <small class="hint" data-i18n="onboarding_extid_hint"></small>
+    </section>
+
+    <section class="step">
+      <h2 data-i18n="onboarding_step4_title">4. Reload</h2>
+      <p data-i18n="onboarding_step4_desc"></p>
+      <button id="btn-check" class="btn btn-primary" data-i18n="onboarding_done_btn">Check connection</button>
+      <p id="status-msg" class="status"></p>
+    </section>
+  </main>
+
+  <script type="module" src="onboarding.js"></script>
+</body>
+</html>

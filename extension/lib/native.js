@@ -18,6 +18,10 @@ let port = null;
 let connected = false;
 let reconnecting = false;
 let reconnectAttempts = 0;
+// True si connectNative falló inmediatamente: el host nativo no está instalado
+// o no está registrado para esta extensión. Permite a la UI distinguir este
+// caso de otros errores (túnel caído, perfil inválido, etc.).
+let hostMissing = false;
 
 // Lista de callbacks pendientes: uno por comando en vuelo, en orden FIFO.
 // Cada entry es { resolve, reject, match }. `match` decide si una respuesta
@@ -32,7 +36,21 @@ function connect() {
   try {
     port = chrome.runtime.connectNative(HOST_NAME);
   } catch (e) {
+    // connectNative lanza síncronamente cuando el host no existe en el
+    // manifest de Native Messaging registrado en el SO.
+    hostMissing = true;
     notifyError("No se pudo conectar con el host: " + e.message);
+    scheduleReconnect();
+    return;
+  }
+
+  // Si connectNative no lanzó, pero chrome.runtime.lastError indica que el
+  // sistema no encontró el host, chrome-runtime marcará un error aquí mismo.
+  if (chrome.runtime.lastError) {
+    hostMissing = true;
+    const msg = chrome.runtime.lastError.message;
+    port = null;
+    notifyError("No se pudo conectar con el host: " + msg);
     scheduleReconnect();
     return;
   }
@@ -40,14 +58,21 @@ function connect() {
   port.onMessage.addListener(onMessage);
   port.onDisconnect.addListener(onDisconnect);
   connected = true;
+  hostMissing = false;
   reconnecting = false;
   reconnectAttempts = 0;
 }
 
 /** Maneja la desconexión del port. */
 function onDisconnect() {
+  const wasNeverConnected = !connected;
   port = null;
   connected = false;
+  // Si nunca llegamos a estar conectados, el host casi seguro no está
+  // instalado / registrado (no es una caída de un túnel que funcionaba).
+  if (wasNeverConnected && chrome.runtime.lastError) {
+    hostMissing = true;
+  }
   // Rechazar todos los comandos pendientes: el host se fue.
   const err = new Error("Conexión con el host cerrada");
   for (const entry of pending.splice(0)) {
@@ -167,6 +192,11 @@ export function init() {
 /** ¿Está conectado al host? */
 export function isConnected() {
   return connected;
+}
+
+/** ¿Se detectó que el host nativo no está instalado / registrado? */
+export function isHostMissing() {
+  return hostMissing;
 }
 
 /** ping → pong. Healthcheck del host. */

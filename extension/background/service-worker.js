@@ -99,6 +99,12 @@ async function handleCommand(message) {
       return disconnect();
 
     case "getStatus": {
+      // Si el host nativo no está instalado, lo señalamos explícitamente para
+      // que la UI pueda mostrar el onboarding en vez de un error genérico.
+      if (native.isHostMissing()) {
+        const state = await storage.getState();
+        return { host: null, hostMissing: true, state };
+      }
       const st = await native.status().catch(() => null);
       const state = await storage.getState();
       return { host: st, state };
