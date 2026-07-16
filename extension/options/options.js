@@ -2,6 +2,10 @@
 import * as storage from "../lib/storage.js";
 import { validateProfile } from "../lib/validate.js";
 import { importConfFiles, profileToConf } from "../lib/conf.js";
+import { applyI18n, t } from "../lib/i18n.js";
+
+// Traducir las cadenas estáticas del HTML.
+applyI18n(document);
 
 // --- Referencias del DOM ---
 const $ = (id) => document.getElementById(id);
@@ -33,18 +37,18 @@ async function renderList() {
 
     const editBtn = document.createElement("button");
     editBtn.className = "btn btn-sm";
-    editBtn.textContent = "Editar";
+    editBtn.textContent = t("btn_edit");
     editBtn.addEventListener("click", () => startEdit(p));
 
     const exportBtn = document.createElement("button");
     exportBtn.className = "btn btn-sm";
-    exportBtn.textContent = "Exportar";
-    exportBtn.title = "Descargar como .conf";
+    exportBtn.textContent = t("btn_export");
+    exportBtn.title = t("export_title");
     exportBtn.addEventListener("click", () => exportProfile(p));
 
     const delBtn = document.createElement("button");
     delBtn.className = "btn btn-sm btn-danger";
-    delBtn.textContent = "Eliminar";
+    delBtn.textContent = t("btn_delete");
     delBtn.addEventListener("click", () => removeProfile(p));
 
     actions.append(editBtn, exportBtn, delBtn);
@@ -75,7 +79,7 @@ function showForm(profile) {
   $("presharedKey").value = profile?.peer?.presharedKey ?? "";
   $("persistentKeepalive").value = profile?.peer?.persistentKeepalive ?? "";
 
-  formTitle.textContent = profile ? "Editar perfil" : "Nuevo perfil";
+  formTitle.textContent = profile ? t("form_edit") : t("form_new");
   formSection.classList.remove("hidden");
   clearErrors();
   $("name").focus();
@@ -150,7 +154,7 @@ function startEdit(profile) {
 }
 
 async function removeProfile(profile) {
-  if (!confirm(`¿Eliminar el perfil «${profile.name}»?`)) return;
+  if (!confirm(t("confirm_delete", profile.name))) return;
   await storage.deleteProfile(profile.id);
   await renderList();
 }
@@ -195,7 +199,7 @@ async function doImport(files) {
   }
   await renderList();
   if (failed.length > 0) {
-    alert(`Importados ${ok} perfil(es).\n\nNo se pudieron importar ${failed.length}:\n\n${failed.join("\n")}`);
+    alert(t("import_summary", String(ok), String(failed.length), failed.join("\n")));
   }
 }
 
@@ -213,7 +217,7 @@ function exportProfile(profile) {
 }
 
 function sanitizeFilename(name) {
-  return name.replace(/[^\w\-]+/g, "_").replace(/^_+|_+$/g, "") || "perfil";
+  return name.replace(/[^\w\-]+/g, "_").replace(/^_+|_+$/g, "") || t("fallback_profile");
 }
 
 // --- Init ---

@@ -1,70 +1,70 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
   <meta charset="UTF-8" />
-  <title>WireGuardExt — Configuración</title>
+  <title data-i18n="options_title">WireGuardExt — Settings</title>
   <link rel="stylesheet" href="options.css" />
 </head>
 <body>
   <header class="topbar">
-    <h1>WireGuardExt</h1>
-    <p class="subtitle">Gestiona tus perfiles VPN de WireGuard</p>
+    <h1 data-i18n="popup_title">WireGuardExt</h1>
+    <p class="subtitle" data-i18n="options_subtitle">Manage your WireGuard VPN profiles</p>
   </header>
 
   <main>
     <!-- Lista de perfiles existentes -->
     <section class="profiles-section">
       <div class="section-head">
-        <h2>Perfiles</h2>
+        <h2 data-i18n="profiles">Profiles</h2>
         <div class="section-actions">
-          <button id="btn-import" class="btn btn-ghost" title="Importar desde .conf de WireGuard">Importar .conf</button>
+          <button id="btn-import" class="btn btn-ghost" data-i18n="import_conf" data-i18n-title="import_conf_title">Import .conf</button>
           <input type="file" id="import-file" accept=".conf" multiple hidden />
-          <button id="btn-new" class="btn btn-primary">+ Nuevo perfil</button>
+          <button id="btn-new" class="btn btn-primary" data-i18n="new_profile">+ New profile</button>
         </div>
       </div>
       <ul id="profile-list" class="profile-list">
         <!-- Rellenado por JS -->
       </ul>
-      <p id="empty-hint" class="empty-hint hidden">
-        Aún no tienes perfiles. Crea uno con «+ Nuevo perfil» o importa un .conf.
+      <p id="empty-hint" class="empty-hint hidden" data-i18n="empty_hint">
+        You don't have any profiles yet. Create one with "+ New profile" or import a .conf.
       </p>
     </section>
 
     <!-- Formulario de alta/edición (oculto por defecto) -->
     <section id="form-section" class="form-section hidden">
-      <h2 id="form-title">Nuevo perfil</h2>
+      <h2 id="form-title" data-i18n="form_new">New profile</h2>
       <form id="profile-form" novalidate>
         <input type="hidden" id="id" />
 
         <div class="field">
-          <label for="name">Nombre del perfil</label>
-          <input type="text" id="name" placeholder="Ej. Trabajo, Casa..." />
+          <label for="name" data-i18n="field_name">Profile name</label>
+          <input type="text" id="name" data-i18n-ph="ph_name" autocomplete="off" />
           <small class="error" data-for="name"></small>
         </div>
 
         <fieldset>
-          <legend>Interfaz</legend>
+          <legend data-i18n="legend_interface">Interface</legend>
 
           <div class="field">
-            <label for="privateKey">Clave privada (PrivateKey)</label>
-            <input type="text" id="privateKey" placeholder="base64 de 32 bytes" autocomplete="off" spellcheck="false" />
+            <label for="privateKey" data-i18n="field_private_key">Private key (PrivateKey)</label>
+            <input type="text" id="privateKey" data-i18n-ph="ph_key" autocomplete="off" spellcheck="false" />
             <small class="error" data-for="privateKey"></small>
           </div>
 
           <div class="field">
-            <label for="address">Dirección del túnel (Address)</label>
+            <label for="address" data-i18n="field_address">Tunnel address (Address)</label>
             <input type="text" id="address" placeholder="10.0.0.2/32" spellcheck="false" />
             <small class="error" data-for="address"></small>
           </div>
 
           <div class="field-row">
             <div class="field">
-              <label for="dns">DNS <span class="opt">(opcional)</span></label>
+              <label for="dns">DNS <span class="opt" data-i18n="opt_optional">(optional)</span></label>
               <input type="text" id="dns" placeholder="1.1.1.1" spellcheck="false" />
               <small class="error" data-for="dns"></small>
             </div>
             <div class="field">
-              <label for="mtu">MTU <span class="opt">(opcional)</span></label>
+              <label for="mtu">MTU <span class="opt" data-i18n="opt_optional">(optional)</span></label>
               <input type="number" id="mtu" placeholder="1280" min="576" max="65535" />
               <small class="error" data-for="mtu"></small>
             </div>
@@ -72,35 +72,35 @@
         </fieldset>
 
         <fieldset>
-          <legend>Peer remoto</legend>
+          <legend data-i18n="legend_peer">Remote peer</legend>
 
           <div class="field">
-            <label for="publicKey">Clave pública del peer (PublicKey)</label>
-            <input type="text" id="publicKey" placeholder="base64 de 32 bytes" autocomplete="off" spellcheck="false" />
+            <label for="publicKey" data-i18n="field_public_key">Peer public key (PublicKey)</label>
+            <input type="text" id="publicKey" data-i18n-ph="ph_key" autocomplete="off" spellcheck="false" />
             <small class="error" data-for="publicKey"></small>
           </div>
 
           <div class="field">
-            <label for="endpoint">Endpoint (host:puerto UDP)</label>
-            <input type="text" id="endpoint" placeholder="vpn.midominio.com:51820" spellcheck="false" />
+            <label for="endpoint" data-i18n="field_endpoint">Endpoint (host:UDP port)</label>
+            <input type="text" id="endpoint" placeholder="vpn.example.com:51820" spellcheck="false" />
             <small class="error" data-for="endpoint"></small>
           </div>
 
           <div class="field">
-            <label for="allowedIPs">AllowedIPs</label>
+            <label for="allowedIPs" data-i18n="field_allowed_ips">AllowedIPs</label>
             <input type="text" id="allowedIPs" placeholder="0.0.0.0/0" spellcheck="false" />
-            <small class="hint">Usa <code>0.0.0.0/0</code> para enrutar todo el tráfico.</small>
+            <small class="hint" data-i18n="hint_allowed_ips">Use 0.0.0.0/0 to route all traffic.</small>
             <small class="error" data-for="allowedIPs"></small>
           </div>
 
           <div class="field-row">
             <div class="field">
-              <label for="presharedKey">PresharedKey <span class="opt">(opcional)</span></label>
-              <input type="text" id="presharedKey" placeholder="base64 de 32 bytes" autocomplete="off" spellcheck="false" />
+              <label for="presharedKey">PresharedKey <span class="opt" data-i18n="opt_optional">(optional)</span></label>
+              <input type="text" id="presharedKey" data-i18n-ph="ph_key" autocomplete="off" spellcheck="false" />
               <small class="error" data-for="presharedKey"></small>
             </div>
             <div class="field">
-              <label for="persistentKeepalive">Keepalive <span class="opt">(opcional)</span></label>
+              <label for="persistentKeepalive">Keepalive <span class="opt" data-i18n="opt_optional">(optional)</span></label>
               <input type="number" id="persistentKeepalive" placeholder="25" min="0" max="65535" />
               <small class="error" data-for="persistentKeepalive"></small>
             </div>
@@ -108,8 +108,8 @@
         </fieldset>
 
         <div class="form-actions">
-          <button type="button" id="btn-cancel" class="btn btn-ghost">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" id="btn-cancel" class="btn btn-ghost" data-i18n="btn_cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="btn_save">Save</button>
         </div>
       </form>
     </section>

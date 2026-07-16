@@ -1,0 +1,251 @@
+{
+  "ext_name": {
+    "message": "WireGuardExt",
+    "description": "Nombre de la extensión que se muestra en la Chrome Web Store y en la gestión de extensiones."
+  },
+  "ext_description": {
+    "message": "Enruta únicamente el tráfico de este navegador por un túnel WireGuard (vía wireproxy userspace), sin afectar al resto del sistema.",
+    "description": "Descripción de la extensión para la Chrome Web Store (máx 132 car)."
+  },
+
+  "popup_title": {
+    "message": "WireGuardExt"
+  },
+  "status_disconnected": {
+    "message": "Desconectado",
+    "description": "Texto del badge cuando el túnel está apagado."
+  },
+  "status_connected": {
+    "message": "Conectado",
+    "description": "Texto del badge cuando el túnel está activo."
+  },
+  "status_connecting": {
+    "message": "Conectando…",
+    "description": "Texto del badge durante la conexión."
+  },
+  "status_error": {
+    "message": "Error",
+    "description": "Texto del badge ante un error."
+  },
+  "no_profiles": {
+    "message": "Sin perfiles — configura uno",
+    "description": "Opción placeholder del selector cuando no hay perfiles."
+  },
+  "btn_connect": {
+    "message": "Conectar"
+  },
+  "btn_disconnect": {
+    "message": "Desconectar"
+  },
+  "btn_retry": {
+    "message": "Reintentar"
+  },
+  "btn_configure": {
+    "message": "Configurar perfiles",
+    "description": "Enlace del pie hacia la página de opciones."
+  },
+  "meta_socks": {
+    "message": "SOCKS5: 127.0.0.1:$port$",
+    "description": "Dirección del proxy local mostrada al conectar.",
+    "placeholders": {
+      "port": { "content": "$1", "example": "51820" }
+    }
+  },
+  "error_no_host": {
+    "message": "No se pudo contactar con el host: $msg$",
+    "description": "Error genérico cuando el host nativo no responde.",
+    "placeholders": {
+      "msg": { "content": "$1", "example": "conexión cerrada" }
+    }
+  },
+  "host_missing_title": {
+    "message": "Componente host no instalado",
+    "description": "Encabezado del popup cuando falta el host nativo."
+  },
+  "host_missing_desc": {
+    "message": "WireGuardExt necesita una pequeña aplicación auxiliar para enrutar el tráfico. Instálala y vuelve a abrir esta ventana.",
+    "description": "Explicación cuando falta el host nativo."
+  },
+  "host_missing_cta": {
+    "message": "Instalar el componente host",
+    "description": "Botón que abre la página de onboarding."
+  },
+
+  "onboarding_title": {
+    "message": "Instalar el componente host",
+    "description": "Título de la página de onboarding."
+  },
+  "onboarding_intro": {
+    "message": "WireGuardExt ya está instalado en tu navegador, pero necesita una pequeña aplicación auxiliar (el «host») para enrutar el tráfico por WireGuard. Es una configuración única y no requiere privilegios de administrador."
+  },
+  "onboarding_step1_title": {
+    "message": "1. Descarga el paquete del host para tu sistema"
+  },
+  "onboarding_step1_desc": {
+    "message": "Ve a la página de la última release y descarga el paquete que corresponda a tu sistema operativo."
+  },
+  "onboarding_step2_title": {
+    "message": "2. Descomprímelo"
+  },
+  "onboarding_step2_desc_linux": {
+    "message": "Abre un terminal en la carpeta de descarga y ejecuta: tar xzf wireguardext-host-linux-amd64-*.tar.gz"
+  },
+  "onboarding_step2_desc_mac": {
+    "message": "Abre un terminal en la carpeta de descarga y ejecuta: tar xzf wireguardext-host-darwin-*.tar.gz"
+  },
+  "onboarding_step2_desc_windows": {
+    "message": "Clic derecho sobre el .zip descargado y elige «Extraer todo…»."
+  },
+  "onboarding_step3_title": {
+    "message": "3. Ejecuta el instalador"
+  },
+  "onboarding_step3_desc_linux_mac": {
+    "message": "En la misma carpeta, ejecuta: ./install.sh — pedirá el ID de esta extensión (se muestra más abajo)."
+  },
+  "onboarding_step3_desc_windows": {
+    "message": "Clic derecho sobre install.ps1 y elige «Ejecutar con PowerShell». Pedirá el ID de esta extensión (se muestra más abajo)."
+  },
+  "onboarding_extid_label": {
+    "message": "Tu ID de extensión (pégalo cuando lo pida el instalador):"
+  },
+  "onboarding_extid_hint": {
+    "message": "Si el campo de arriba está vacío, abre chrome://extensions, activa el modo desarrollador y copia el ID que aparece bajo WireGuardExt."
+  },
+  "onboarding_step4_title": {
+    "message": "4. Recarga la extensión"
+  },
+  "onboarding_step4_desc": {
+    "message": "Vuelve a chrome://extensions y pulsa el icono de recarga en WireGuardExt, o simplemente cierra y vuelve a abrir el popup. ¡Listo!"
+  },
+  "onboarding_done_btn": {
+    "message": "Comprobar conexión"
+  },
+  "onboarding_releases_btn": {
+    "message": "Abrir la página de releases"
+  },
+  "onboarding_status_checking": {
+    "message": "Comprobando la conexión con el host…"
+  },
+  "onboarding_status_ok": {
+    "message": "✓ Host conectado. Ya puedes cerrar esta página y usar la extensión."
+  },
+  "onboarding_status_missing": {
+    "message": "Sigue sin poder contactar con el host. Revisa los pasos 1–4 y recarga esta página."
+  },
+
+  "options_title": {
+    "message": "WireGuardExt — Configuración",
+    "description": "Título de la página de opciones."
+  },
+  "options_subtitle": {
+    "message": "Gestiona tus perfiles VPN de WireGuard"
+  },
+  "profiles": {
+    "message": "Perfiles",
+    "description": "Encabezado de la lista de perfiles."
+  },
+  "import_conf": {
+    "message": "Importar .conf"
+  },
+  "import_conf_title": {
+    "message": "Importar desde un .conf de WireGuard"
+  },
+  "new_profile": {
+    "message": "+ Nuevo perfil"
+  },
+  "empty_hint": {
+    "message": "Aún no tienes perfiles. Crea uno con «+ Nuevo perfil» o importa un .conf."
+  },
+  "form_new": {
+    "message": "Nuevo perfil",
+    "description": "Encabezado del formulario al crear."
+  },
+  "form_edit": {
+    "message": "Editar perfil",
+    "description": "Encabezado del formulario al editar."
+  },
+  "field_name": {
+    "message": "Nombre del perfil"
+  },
+  "ph_name": {
+    "message": "Ej. Trabajo, Casa…"
+  },
+  "legend_interface": {
+    "message": "Interfaz"
+  },
+  "field_private_key": {
+    "message": "Clave privada (PrivateKey)"
+  },
+  "ph_key": {
+    "message": "base64 de 32 bytes"
+  },
+  "field_address": {
+    "message": "Dirección del túnel (Address)"
+  },
+  "field_dns": {
+    "message": "DNS"
+  },
+  "opt_optional": {
+    "message": "(opcional)"
+  },
+  "field_mtu": {
+    "message": "MTU"
+  },
+  "legend_peer": {
+    "message": "Peer remoto"
+  },
+  "field_public_key": {
+    "message": "Clave pública del peer (PublicKey)"
+  },
+  "field_endpoint": {
+    "message": "Endpoint (host:puerto UDP)"
+  },
+  "field_allowed_ips": {
+    "message": "AllowedIPs"
+  },
+  "hint_allowed_ips": {
+    "message": "Usa 0.0.0.0/0 para enrutar todo el tráfico."
+  },
+  "field_preshared_key": {
+    "message": "PresharedKey"
+  },
+  "field_keepalive": {
+    "message": "Keepalive"
+  },
+  "btn_cancel": {
+    "message": "Cancelar"
+  },
+  "btn_save": {
+    "message": "Guardar"
+  },
+  "btn_edit": {
+    "message": "Editar"
+  },
+  "btn_export": {
+    "message": "Exportar"
+  },
+  "export_title": {
+    "message": "Descargar como .conf"
+  },
+  "btn_delete": {
+    "message": "Eliminar"
+  },
+  "confirm_delete": {
+    "message": "¿Eliminar el perfil «$name$»?",
+    "placeholders": {
+      "name": { "content": "$1", "example": "Trabajo" }
+    }
+  },
+  "import_summary": {
+    "message": "Importados $ok$ perfil(es).\n\nNo se pudieron importar $failed$:\n\n$detail$",
+    "placeholders": {
+      "ok": { "content": "$1" },
+      "failed": { "content": "$2" },
+      "detail": { "content": "$3" }
+    }
+  },
+  "fallback_profile": {
+    "message": "perfil",
+    "description": "Nombre de fichero alternativo cuando un perfil no tiene nombre."
+  }
+}

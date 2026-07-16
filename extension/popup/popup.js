@@ -1,6 +1,10 @@
 // popup.js — Lógica del popup: toggle de conexión y selector de perfil.
 
 import * as storage from "../lib/storage.js";
+import { applyI18n, t } from "../lib/i18n.js";
+
+// Traducir las cadenas estáticas del HTML.
+applyI18n(document);
 
 const $ = (id) => document.getElementById(id);
 const select = $("profile-select");
@@ -9,9 +13,11 @@ const btnLabel = btnToggle.querySelector(".label");
 const badge = $("status-badge");
 const meta = $("meta");
 const errorBox = $("error");
+const hostMissing = $("host-missing");
+const btnInstallHost = $("btn-install-host");
 
 // Estado UI local.
-let uiState = "disconnected"; // disconnected | connecting | connected | error
+let uiState = "disconnected"; // disconnected | connecting | connected | error | host_missing
 let currentProfileId = null;
 
 /** Envía un comando al service worker. */
@@ -37,7 +43,7 @@ async function render() {
   select.innerHTML = "";
   if (profiles.length === 0) {
     const opt = document.createElement("option");
-    opt.textContent = "Sin perfiles — configura uno";
+    opt.textContent = t("no_profiles");
     opt.disabled = true;
     select.append(opt);
     btnToggle.disabled = true;
@@ -54,7 +60,10 @@ async function render() {
   // Cargar estado actual desde el SW.
   try {
     const status = await sendCommand("getStatus");
-    if (status?.host?.running) {
+    // Si el host no está instalado / no responde, el SW lo señala.
+    if (status?.hostMissing || status?.host === null || status?.host === undefined) {
+      showHostMissing();
+    } else if (status?.host?.running) {
       currentProfileId = status.state?.activeProfileId;
       uiState = "connected";
       if (currentProfileId) select.value = currentProfileId;
@@ -64,50 +73,60 @@ async function render() {
       hideMeta();
     }
   } catch (e) {
+    showError(t("error_no_host", e.message));
     uiState = "error";
-    showError("No se pudo contactar con el host: " + e.message);
   }
   updateUI();
 }
 
 function updateUI() {
   badge.className = "badge";
+  // Ocultar el bloque de host ausente salvo en su estado.
+  hostMissing.classList.toggle("hidden", uiState !== "host_missing");
+
   switch (uiState) {
     case "connected":
       badge.classList.add("badge-on");
-      badge.textContent = "Conectado";
+      badge.textContent = t("status_connected");
       btnToggle.classList.remove("connecting");
       btnToggle.classList.add("connected");
       btnToggle.disabled = false;
-      btnLabel.textContent = "Desconectar";
+      btnLabel.textContent = t("btn_disconnect");
       break;
     case "connecting":
       badge.classList.add("badge-connecting");
-      badge.textContent = "Conectando…";
+      badge.textContent = t("status_connecting");
       btnToggle.classList.add("connecting");
       btnToggle.classList.remove("connected");
       btnToggle.disabled = true;
-      btnLabel.textContent = "Conectando…";
+      btnLabel.textContent = t("status_connecting");
+      break;
+    case "host_missing":
+      // El bloque host-missing ya está visible; el botón principal queda oculto.
+      badge.classList.add("badge-error");
+      badge.textContent = t("status_error");
+      btnToggle.disabled = true;
       break;
     case "error":
       badge.classList.add("badge-error");
-      badge.textContent = "Error";
+      badge.textContent = t("status_error");
       btnToggle.classList.remove("connecting", "connected");
       btnToggle.disabled = false;
-      btnLabel.textContent = "Reintentar";
+      btnLabel.textContent = t("btn_retry");
       break;
     default: // disconnected
       badge.classList.add("badge-off");
-      badge.textContent = "Desconectado";
+      badge.textContent = t("status_disconnected");
       btnToggle.classList.remove("connecting", "connected");
       btnToggle.disabled = select.options.length === 0 || select.options[0]?.disabled;
-      btnLabel.textContent = "Conectar";
+      btnLabel.textContent = t("btn_connect");
   }
 }
 
 function showMeta(host) {
   meta.classList.remove("hidden");
-  meta.innerHTML = `SOCKS5: <strong>127.0.0.1:${escapeHtml(host.socksPort)}</strong>`;
+  // host.socksPort es numérico; meta_socks incluye el prefijo "SOCKS5: 127.0.0.1:".
+  meta.textContent = t("meta_socks", host.socksPort);
 }
 function hideMeta() {
   meta.classList.add("hidden");
@@ -120,10 +139,11 @@ function hideError() {
   errorBox.classList.add("hidden");
 }
 
-function escapeHtml(s) {
-  const d = document.createElement("div");
-  d.textContent = String(s ?? "");
-  return d.innerHTML;
+/** Conmuta el popup al estado "host no instalado". */
+function showHostMissing() {
+  uiState = "host_missing";
+  hideMeta();
+  hideError();
 }
 
 // --- Acciones ---
@@ -161,6 +181,11 @@ btnToggle.addEventListener("click", async () => {
 
 $("btn-options").addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
+});
+
+// Abre la página de onboarding (instalación del host) en una pestaña nueva.
+btnInstallHost.addEventListener("click", () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL("onboarding/onboarding.html") });
 });
 
 render();

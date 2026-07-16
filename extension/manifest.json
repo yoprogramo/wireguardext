@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "WireGuardExt — VPN solo para el navegador",
-  "version": "0.1.2",
-  "description": "Enruta únicamente el tráfico de este navegador por un túnel WireGuard (vía wireproxy userspace), sin afectar al resto del sistema.",
+  "name": "__MSG_ext_name__",
+  "short_name": "WireGuardExt",
+  "version": "0.2.0",
+  "description": "__MSG_ext_description__",
+  "default_locale": "en",
+  "homepage_url": "https://github.com/yoprogramo/wireguardext",
+  "author": "yoprogramo",
+  "minimum_chrome_version": "116",
 
   "permissions": [
     "proxy",

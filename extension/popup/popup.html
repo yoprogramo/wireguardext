@@ -1,31 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
   <meta charset="UTF-8" />
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
   <header class="header">
-    <h1>WireGuardExt</h1>
-    <div id="status-badge" class="badge badge-off">Desconectado</div>
+    <h1 data-i18n="popup_title">WireGuardExt</h1>
+    <div id="status-badge" class="badge badge-off" data-i18n="status_disconnected">Disconnected</div>
   </header>
 
   <div class="body">
-    <label class="field-label" for="profile-select">Perfil</label>
+    <label class="field-label" for="profile-select" data-i18n="profiles">Profile</label>
     <select id="profile-select" class="select"></select>
 
     <button id="btn-toggle" class="btn-toggle" disabled>
       <span class="dot"></span>
-      <span class="label">Conectar</span>
+      <span class="label" data-i18n="btn_connect">Connect</span>
     </button>
 
     <div id="meta" class="meta hidden"></div>
 
     <div id="error" class="error hidden"></div>
+
+    <!-- Estado: host nativo no instalado. Se muestra cuando el primer ping
+         falla; el usuario debe instalar el componente host aparte. -->
+    <div id="host-missing" class="host-missing hidden">
+      <p class="host-missing-title" data-i18n="host_missing_title">Host component not installed</p>
+      <p class="host-missing-desc" data-i18n="host_missing_desc">WireGuardExt needs a small companion app to route traffic. Install it, then reload this popup.</p>
+      <button id="btn-install-host" class="btn btn-primary" data-i18n="host_missing_cta">Install the host component</button>
+    </div>
   </div>
 
   <footer class="footer">
-    <button id="btn-options" class="link">Configurar perfiles</button>
+    <button id="btn-options" class="link" data-i18n="btn_configure">Configure profiles</button>
   </footer>
 
   <script type="module" src="popup.js"></script>
