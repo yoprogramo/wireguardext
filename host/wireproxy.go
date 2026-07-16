@@ -206,10 +206,21 @@ func buildConfiguration(p *Profile, socksPort int) (*wp.Configuration, error) {
 		return nil, fmt.Errorf("AllowedIPs inválido %q: %w", allowedStr, err)
 	}
 
+	// El endpoint puede ser "host:puerto" con host como IP o como nombre DNS.
+	// wireguard-go (vía IpcSet) solo acepta "IP:puerto", así que resolvemos
+	// el hostname aquí. Es lo mismo que hace wireproxy al leer un .conf
+	// (config.go::resolveIPPAndPort). La resolución es puntual, en el momento
+	// de conectar; no se cachea ni se renueva (WireGuard ya refresca la
+	// dirección del endpoint conforme habla con el peer).
+	endpoint, err := resolveHostPort(p.Peer.Endpoint)
+	if err != nil {
+		return nil, fmt.Errorf("Endpoint %q no se pudo resolver: %w", p.Peer.Endpoint, err)
+	}
+
 	peer := wp.PeerConfig{
 		PublicKey:    publicHex,
 		PreSharedKey: presharedHex,
-		Endpoint:     strPtr(p.Peer.Endpoint),
+		Endpoint:     strPtr(endpoint),
 		KeepAlive:    p.Peer.PersistentKeepalive,
 		AllowedIPs:   []netip.Prefix{allowedPrefix},
 	}
@@ -247,4 +258,33 @@ func base64KeyToHex(b64, fieldName string) (string, error) {
 		return "", fmt.Errorf("%s debe tener 32 bytes tras decodificar base64 (tiene %d)", fieldName, len(decoded))
 	}
 	return hex.EncodeToString(decoded), nil
+}
+
+// resolveHostPort normaliza un endpoint "host:puerto" a "IP:puerto",
+// resolviendo el hostname vía DNS si fuera necesario.
+//
+// wireguard-go solo acepta IPs en el endpoint del peer (no nombres), por lo
+// que todo endpoint con hostname debe resolverse antes de pasárselo.
+//
+// Comportamiento:
+//   - Si host ya es una IP (v4 o v6), se devuelve sin cambios.
+//   - Si es un nombre DNS, se resuelve a una IP con net.ResolveIPAddr.
+//   - Se admite la sintaxis [ipv6]:puerto.
+//
+// Equivalente a wireproxy config.go::resolveIPPAndPort.
+func resolveHostPort(addr string) (string, error) {
+	host, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return "", err
+	}
+	// Caso rápido: si ya es una IP literal, JoinHostPort lo deja igual.
+	if net.ParseIP(host) != nil {
+		return net.JoinHostPort(host, port), nil
+	}
+	// Resolver el nombre DNS.
+	ipAddr, err := net.ResolveIPAddr("ip", host)
+	if err != nil {
+		return "", err
+	}
+	return net.JoinHostPort(ipAddr.String(), port), nil
 }
