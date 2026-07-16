@@ -26,6 +26,27 @@ Guárdalas en esta carpeta con estos nombres:
 - Oculta o difumina cualquier clave privada / endpoint real antes de subir.
 - Recorta a **1280×800** exacto (la CWS lo escala bien a 640×400).
 
+### Plantillas con fondo de marca (opcional pero recomendado)
+
+Hay 5 plantillas SVG **1280×800** en `store/screenshots/` con el fondo de marca
+de WireGuardExt y un área punteada donde pegar la captura. Para regenerarlas:
+
+```bash
+python3 store/make-templates.py
+```
+
+Flujo de edición (con [Inkscape](https://inkscape.org/), gratuito):
+
+1. Abre `store/screenshots/01-popup-connected.svg` (etc.).
+2. `Archivo → Importar…` tu captura PNG; colócala dentro del área punteada.
+3. Borra el rectángulo punteado y el texto «Pega aquí la captura».
+4. `Archivo → Exportar → Exportar PNG` → dimensiones **1280×800**, mismo
+   nombre base (`.png`).
+
+Las plantillas de popup (`01`, `02`) ya dibujan una ventana de navegador de
+fondo y sitúan el área del popup arriba-derecha, como en Chrome. Las de página
+completa (`03`, `04`, `05`) usan un rectángulo limpio a ancho completo.
+
 ---
 
 ## Texto de la ficha (Description)
