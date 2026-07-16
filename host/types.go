@@ -2,8 +2,10 @@ package main
 
 import "net/netip"
 
-// HostVersion es la versión del native messaging host. Se incrementa en cada release.
-const HostVersion = "0.1.2"
+// HostVersion es la versión del native messaging host.
+// Se mantiene alineada con la versión de la extensión (manifest.json):
+// extensión y host se versionan juntos como una unidad.
+const HostVersion = "0.2.0"
 
 // NativeMessagingHost es el nombre registrado del host. Debe coincidir con:
 //   - el campo "name" del manifest de Native Messaging (com.wireguardext.host.json)
