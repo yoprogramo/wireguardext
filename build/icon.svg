@@ -42,18 +42,36 @@
         fill="none" stroke="#ffffff" stroke-opacity="0.32"
         stroke-width="3" stroke-linecap="round"/>
 
-  <!-- Patrón serpenteante central (homenaje a WireGuard) -->
-  <!-- Curva en "S" formada por dos arcos enfrentados + conector -->
-  <g fill="none" stroke="#fffcfc" stroke-width="6" stroke-linecap="round">
-    <!-- Arco superior (abertura abajo) -->
-    <path d="M 53 50 A 11 11 0 1 0 75 50"/>
-    <!-- Conector vertical -->
-    <path d="M 64 50 L 64 78"/>
-    <!-- Arco inferior (abertura arriba) -->
-    <path d="M 53 78 A 11 11 0 1 1 75 78"/>
+  <!-- Cabeza de dragón estilizada (motivo central, homenaje a WireGuard) -->
+  <!-- Dragón heráldico de frente, simétrico. Diseño bold que escala bien
+       incluso a 16px: cráneo, dos cuernos, dos ojos y hocico puntiagudo. -->
+  <g fill="#fffcfc">
+    <!-- Cuernos (simétricos, hacia afuera/arriba) -->
+    <path d="M 50 52 C 44 44, 40 42, 38 44 C 37 46, 38 49, 42 52 C 45 54, 48 55, 51 56 Z"/>
+    <path d="M 78 52 C 84 44, 88 42, 90 44 C 91 46, 90 49, 86 52 C 83 54, 80 55, 77 56 Z"/>
+
+    <!-- Cráneo + hocico (forma de cabeza frontal) -->
+    <path d="M 64 50
+             C 54 50, 47 56, 47 65
+             C 47 71, 51 75, 55 76
+             L 60 86
+             C 61 88, 63 88, 64 86
+             L 64 78
+             L 64 86
+             C 65 88, 67 88, 68 86
+             L 73 76
+             C 77 75, 81 71, 81 65
+             C 81 56, 74 50, 64 50 Z"/>
+
+    <!-- Mejillas (apéndices a los lados del hocico, tipo barbas de dragón) -->
+    <path d="M 47 67 L 42 72 L 48 72 Z"/>
+    <path d="M 81 67 L 86 72 L 80 72 Z"/>
   </g>
 
-  <!-- Punto focal dorado (la "cabeza"/luz del dragón) -->
-  <circle cx="64" cy="39" r="4" fill="#ffdc78"/>
-  <circle cx="64" cy="39" r="4" fill="#ffdc78" opacity="0.5"/>
+  <!-- Ojos (simétricos, recortes oscuros) -->
+  <ellipse cx="57" cy="64" rx="3" ry="3.5" fill="#3a0a0c"/>
+  <ellipse cx="71" cy="64" rx="3" ry="3.5" fill="#3a0a0c"/>
+  <!-- Pupilas brillantes doradas -->
+  <circle cx="57.5" cy="64" r="1.1" fill="#ffdc78"/>
+  <circle cx="71.5" cy="64" r="1.1" fill="#ffdc78"/>
 </svg>
