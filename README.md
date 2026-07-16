@@ -39,6 +39,16 @@ Solo el navegador pasa por la VPN; el resto de las conexiones del sistema quedan
 
 > No necesitas instalar Go ni compilar nada: las [releases](https://github.com/yoprogramo/wireguardext/releases) incluyen binarios del host ya compilados para cada plataforma.
 
+## Instalación desde la Chrome Web Store
+
+La forma más sencilla: instala la extensión directamente desde la Chrome Web Store (en cuanto se publique). Como la CWS **no permite empaquetar el binario del host dentro de la extensión**, el componente host se instala aparte, pero la propia extensión te guía:
+
+1. Instala **WireGuardExt** desde la Chrome Web Store.
+2. Al abrir el popup por primera vez verás el aviso **«Host component not installed»**. Pulsa **«Install the host component»**: se abre una página de ayuda con instrucciones para tu sistema operativo y el ID de tu extensión ya rellenado.
+3. Descarga el paquete del host para tu SO desde la [última release](https://github.com/yoprogramo/wireguardext/releases/latest), ejecuta el instalador (`install.sh` / `install.ps1`) pegando el ID y recarga la extensión.
+
+> Política de privacidad: <https://yoprogramo.github.io/wireguardext/>
+
 ## Instalación (usuario final)
 
 Esta vía usa los binarios publicados en la página de [releases](https://github.com/yoprogramo/wireguardext/releases). No requiere compilar nada.

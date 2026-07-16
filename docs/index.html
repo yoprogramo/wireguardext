@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WireGuardExt — Privacy Policy</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      line-height: 1.6;
+      color: #1a1d24;
+      background: #fff;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e6e8ec; background: #0f1115; }
+      a { color: #6cb0ff; }
+      table { border-color: #2c313c; }
+      th, td { background: #181b22; }
+      code { background: #181b22; }
+    }
+    h1, h2 { line-height: 1.25; }
+    h1 { font-size: 1.9em; margin-bottom: 0.2em; }
+    h2 { margin-top: 2em; border-bottom: 1px solid #8882; padding-bottom: 0.3em; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #f2f3f5;
+    }
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th, td { border: 1px solid #d8dce3; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #f7f8fa; }
+    blockquote {
+      margin: 1em 0;
+      padding: 12px 16px;
+      border-left: 4px solid #4c8eff;
+      background: #4c8eff1a;
+      border-radius: 0 6px 6px 0;
+    }
+    a { color: #2563eb; }
+    .updated { color: #5f6571; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+<h1>Privacy Policy — WireGuardExt</h1>
+<p class="updated"><strong>Last updated:</strong> 2026-07-15</p>
+
+<p>WireGuardExt (&ldquo;the extension&rdquo;) routes <strong>only the browser's traffic</strong>
+through a WireGuard VPN tunnel that <strong>you</strong> configure. This page explains,
+plainly, what data the extension handles and where it goes.</p>
+
+<blockquote>
+<p><strong>Summary:</strong> The extension does <strong>not</strong> collect, sell, share, or
+transmit your personal data to the developer or any third party. Your
+WireGuard credentials and profiles are stored <strong>locally</strong> on your device.
+Network traffic is sent <strong>only</strong> to the WireGuard server (peer) that
+<strong>you</strong> configure.</p>
+</blockquote>
+
+<h2>1. Data we store (on your device only)</h2>
+<p>The extension uses <code>chrome.storage.local</code> to keep the following information
+<strong>on your computer</strong>. It never leaves your device via the extension:</p>
+<table>
+<thead><tr><th>Data</th><th>Purpose</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>WireGuard profiles (name, PrivateKey, Address, DNS, MTU, peer PublicKey, Endpoint, AllowedIPs, optional PresharedKey, Keepalive)</td><td>The configuration needed to establish <strong>your</strong> VPN tunnel.</td><td><code>chrome.storage.local</code> (your browser profile)</td></tr>
+<tr><td>Active connection state (which profile is active, local SOCKS port, connected/disconnected flag)</td><td>Remember the current tunnel state across browser restarts.</td><td><code>chrome.storage.local</code></td></tr>
+</tbody>
+</table>
+<p>These credentials are <strong>required</strong> for the extension to work: they describe
+how to reach <strong>your own</strong> WireGuard server.</p>
+
+<h2>2. Data we do NOT collect</h2>
+<p>The extension <strong>does not</strong>:</p>
+<ul>
+<li>Collect analytics, usage statistics, or telemetry.</li>
+<li>Collect browsing history, URLs, search queries, or DNS queries.</li>
+<li>Collect personally identifiable information (name, email, IP address, etc.).</li>
+<li>Request authentication or accounts; there is no login.</li>
+<li>Set cookies or use tracking technologies.</li>
+<li>Sell or transfer data to third parties.</li>
+</ul>
+
+<h2>3. Network traffic</h2>
+<p>When a tunnel is <strong>active</strong>, the extension configures the browser to route
+its traffic through a local SOCKS5 proxy (<code>127.0.0.1</code>) provided by the
+companion <strong>host application</strong>
+(<a href="https://github.com/pufferffish/wireproxy" target="_blank" rel="noopener">wireproxy</a>).
+That traffic is then encrypted and sent <strong>directly to the WireGuard server
+(peer endpoint) you configured</strong> &mdash; for example <code>vpn.example.com:51820</code>.</p>
+<p>The developer of WireGuardExt <strong>never</strong> receives, proxies, inspects, or
+stores this traffic. The only network destination is the server you chose.</p>
+<p>When the tunnel is <strong>inactive</strong>, the extension routes traffic to a direct
+connection (no proxy).</p>
+
+<h2>4. The companion host application</h2>
+<p>WireGuardExt requires a small companion program (the &ldquo;native messaging host&rdquo;)
+that you install separately on your operating system. This host:</p>
+<ul>
+<li>Runs locally on your machine as your user (no administrator/root required).</li>
+<li>Receives the profile configuration from the extension <strong>over Chrome's
+Native Messaging channel</strong> (local inter-process communication; not a
+network socket).</li>
+<li>Starts/stops wireproxy, which establishes the WireGuard tunnel.</li>
+<li>Does <strong>not</strong> include telemetry, auto-update phone-home, or any outbound
+network connection other than the WireGuard tunnel you configured.</li>
+</ul>
+
+<h2>5. Permissions and why each is required</h2>
+<table>
+<thead><tr><th>Permission</th><th>Why it is needed</th></tr></thead>
+<tbody>
+<tr><td><code>proxy</code></td><td>To direct the browser's traffic through the local WireGuard SOCKS5 tunnel, and restore the direct connection when disconnected.</td></tr>
+<tr><td><code>storage</code></td><td>To save your VPN profiles and connection state locally on your device.</td></tr>
+<tr><td><code>nativeMessaging</code></td><td>To communicate with the local companion host application that runs wireproxy.</td></tr>
+</tbody>
+</table>
+<p>The extension requests <strong>no</strong> <code>host_permissions</code> and does not read or
+modify the content of any website.</p>
+
+<h2>6. Third-party services / open-source components</h2>
+<ul>
+<li><a href="https://github.com/pufferffish/wireproxy" target="_blank" rel="noopener">wireproxy</a>
+(Apache-2.0): the userspace WireGuard client embedded in the companion host.
+Its own privacy characteristics are those of the WireGuard protocol.</li>
+<li>The extension is distributed as open source under the
+<a href="https://github.com/yoprogramo/wireguardext/blob/main/LICENSE" target="_blank" rel="noopener">Apache-2.0 license</a>.</li>
+</ul>
+
+<h2>7. Data retention and deletion</h2>
+<p>Because all data lives locally in your browser, you can remove it at any time:</p>
+<ul>
+<li><strong>Delete individual profiles</strong> from the extension's Options page.</li>
+<li><strong>Remove all data</strong> by uninstalling the extension (this deletes
+everything stored in <code>chrome.storage.local</code>), and by removing the
+companion host application from your system.</li>
+</ul>
+
+<h2>8. Children's privacy</h2>
+<p>The extension is not directed at children under 16, and no data is knowingly
+collected from anyone.</p>
+
+<h2>9. Changes to this policy</h2>
+<p>Material changes will be reflected by updating the &ldquo;Last updated&rdquo; date above
+and publishing the revised version at this same URL.</p>
+
+<h2>10. Contact</h2>
+<p>For privacy questions or requests, open an issue at
+<a href="https://github.com/yoprogramo/wireguardext/issues" target="_blank" rel="noopener">https://github.com/yoprogramo/wireguardext/issues</a>.</p>
+
+</body>
+</html>
