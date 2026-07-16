@@ -4,7 +4,7 @@
     "description": "Extension name shown in the Chrome Web Store and management UI."
   },
   "ext_description": {
-    "message": "Route only this browser's traffic through a WireGuard tunnel (via the wireproxy userspace client), without affecting the rest of the system.",
+    "message": "Route only this browser's traffic through a WireGuard tunnel, without affecting the rest of the system.",
     "description": "Extension description for the Chrome Web Store (max 132 chars)."
   },
 
