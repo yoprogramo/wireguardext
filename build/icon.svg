@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Icono de WireGuardExt (128×128 como fuente; se rasteriza a 16/48/128).
+
+  Composición original inspirada en la estética del logo de WireGuard
+  (escudo rojizo con patrón serpenteante), añadiendo un arco superior que
+  evoca una ventana de navegador/globo, para distinguirlo como "VPN de
+  navegador". No reproduce el logo oficial (marca registrada).
+
+  Paleta:
+    - Rojo brillante #d4322d → granate oscuro #781216 (degradado del escudo)
+    - Blanco #fffcfc (patrón serpenteante)
+    - Dorado #ffdc78 (punto focal)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <!-- Degradado radial del escudo: brillante en el centro, oscuro en el borde -->
+    <radialGradient id="shield" cx="50%" cy="42%" r="60%">
+      <stop offset="0%" stop-color="#e23a2f"/>
+      <stop offset="55%" stop-color="#b8251f"/>
+      <stop offset="100%" stop-color="#6e1014"/>
+    </radialGradient>
+    <!-- Brillo sutil superior (volumen) -->
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Escudo circular con degradado -->
+  <circle cx="64" cy="64" r="59" fill="url(#shield)"/>
+
+  <!-- Anillo metálico claro interno (contorno sutil) -->
+  <circle cx="64" cy="64" r="57" fill="none" stroke="#f0c8c4" stroke-opacity="0.25" stroke-width="1.5"/>
+  <circle cx="64" cy="64" r="59" fill="none" stroke="#3a0a0c" stroke-opacity="0.6" stroke-width="1.5"/>
+
+  <!-- Brillo superior (sensación de volumen) -->
+  <circle cx="64" cy="64" r="59" fill="url(#gloss)"/>
+
+  <!-- Arco superior: referencia a ventana de navegador / globo -->
+  <path d="M 27 42 A 42 42 0 0 1 101 42"
+        fill="none" stroke="#ffffff" stroke-opacity="0.32"
+        stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Patrón serpenteante central (homenaje a WireGuard) -->
+  <!-- Curva en "S" formada por dos arcos enfrentados + conector -->
+  <g fill="none" stroke="#fffcfc" stroke-width="6" stroke-linecap="round">
+    <!-- Arco superior (abertura abajo) -->
+    <path d="M 53 50 A 11 11 0 1 0 75 50"/>
+    <!-- Conector vertical -->
+    <path d="M 64 50 L 64 78"/>
+    <!-- Arco inferior (abertura arriba) -->
+    <path d="M 53 78 A 11 11 0 1 1 75 78"/>
+  </g>
+
+  <!-- Punto focal dorado (la "cabeza"/luz del dragón) -->
+  <circle cx="64" cy="39" r="4" fill="#ffdc78"/>
+  <circle cx="64" cy="39" r="4" fill="#ffdc78" opacity="0.5"/>
+</svg>
