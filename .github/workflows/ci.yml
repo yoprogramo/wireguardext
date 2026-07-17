@@ -19,9 +19,9 @@ jobs:
       matrix:
         go: ["1.24", stable]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: ${{ matrix.go }}
           cache-dependency-path: host/go.sum
@@ -51,16 +51,16 @@ jobs:
     name: Extension (JS)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "20"
 
       - name: Sintaxis JS (node --check)
         run: |
           set -e
-          for f in extension/lib/*.js extension/popup/popup.js extension/options/options.js extension/background/service-worker.js; do
+          for f in extension/lib/*.js extension/popup/popup.js extension/options/options.js extension/background/service-worker.js extension/onboarding/onboarding.js; do
             node --check "$f"
             echo "  ok  $f"
           done
