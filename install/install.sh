@@ -17,6 +17,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BIN_NAME="wireguardext-host"
 
+# --- Sistema operativo ---
+OS="$(uname -s)"
+case "$OS" in
+  Darwin*) PLATFORM="macos" ;;
+  Linux*)  PLATFORM="linux" ;;
+  *)       PLATFORM="linux" ;;   # fallback: tratamos como Linux/Unix
+esac
+
 # --- ID de la extensión ---
 EXTENSION_ID="${1:-}"
 if [[ -z "$EXTENSION_ID" ]]; then
@@ -68,6 +76,15 @@ mkdir -p "$INSTALL_DIR"
 cp "$HOST_BIN" "$INSTALL_DIR/wireguardext-host"
 chmod +x "$INSTALL_DIR/wireguardext-host"
 
+# En macOS, los binarios descargados (del tar.gz de la release) arrastran el
+# atributo com.apple.quarantine: al ejecutarlos, Gatekeeper los bloquea con
+# "La app no se puede abrir porque el desarrollador no puede verificarse".
+# Lo quitamos para que el host pueda arrancar vía Native Messaging.
+if [[ "$PLATFORM" == "macos" ]]; then
+  xattr -d com.apple.quarantine "$INSTALL_DIR/wireguardext-host" 2>/dev/null || true
+  xattr -cr "$INSTALL_DIR/wireguardext-host" 2>/dev/null || true
+fi
+
 # --- Generar manifest de Native Messaging con la ruta real ---
 MANIFEST_TEMPLATE="$SCRIPT_DIR/${HOST_NAME}.json"
 HOST_PATH="$INSTALL_DIR/wireguardext-host"
@@ -78,17 +95,35 @@ sed -e "s|__HOST_PATH_PLACEHOLDER__|$HOST_PATH|g" \
     "$MANIFEST_TEMPLATE" > "$MANIFEST_OUT"
 
 # --- Registrar el manifest en cada navegador instalado ---
-NM_DIRS=(
-  "$HOME/.config/google-chrome/NativeMessagingHosts"
-  "$HOME/.config/chromium/NativeMessagingHosts"
-  "$HOME/.config/google-chrome-beta/NativeMessagingHosts"
-  "$HOME/.config/microsoft-edge/NativeMessagingHosts"
-  "$HOME/.config/BraveSoftware/Brave-Browser/NativeMessagingHosts"
-  "$HOME/.config/vivaldi/NativeMessagingHosts"
-)
+# Las rutas de Native Messaging dependen del SO:
+#   Linux:  ~/.config/<navegador>/NativeMessagingHosts
+#   macOS:  ~/Library/Application Support/<navegador>/NativeMessagingHosts
+NM_DIRS=()
+if [[ "$PLATFORM" == "macos" ]]; then
+  BASE="$HOME/Library/Application Support"
+  NM_DIRS=(
+    "$BASE/Google/Chrome/NativeMessagingHosts"
+    "$BASE/Chromium/NativeMessagingHosts"
+    "$BASE/Google/Chrome Beta/NativeMessagingHosts"
+    "$BASE/Microsoft Edge/NativeMessagingHosts"
+    "$BASE/BraveSoftware/Brave-Browser/NativeMessagingHosts"
+    "$BASE/Vivaldi/NativeMessagingHosts"
+  )
+else
+  BASE="$HOME/.config"
+  NM_DIRS=(
+    "$BASE/google-chrome/NativeMessagingHosts"
+    "$BASE/chromium/NativeMessagingHosts"
+    "$BASE/google-chrome-beta/NativeMessagingHosts"
+    "$BASE/microsoft-edge/NativeMessagingHosts"
+    "$BASE/BraveSoftware/Brave-Browser/NativeMessagingHosts"
+    "$BASE/vivaldi/NativeMessagingHosts"
+  )
+fi
 
 registered=0
 for nm_dir in "${NM_DIRS[@]}"; do
+  # Registrar solo en navegadores que parezcan instalados (su dir base existe).
   if [[ -d "$(dirname "$nm_dir")" ]]; then
     mkdir -p "$nm_dir"
     cp "$MANIFEST_OUT" "$nm_dir/${HOST_NAME}.json"
@@ -98,9 +133,13 @@ for nm_dir in "${NM_DIRS[@]}"; do
 done
 
 if [[ "$registered" -eq 0 ]]; then
-  # No se detectó ningún navegador: dejamos el manifest en ~/.config/google-chrome
-  # como ubicación por defecto para que el usuario la mueva si hace falta.
-  nm_dir="$HOME/.config/google-chrome/NativeMessagingHosts"
+  # No se detectó ningún navegador: dejamos el manifest en la ruta por defecto
+  # de Google Chrome para que el usuario la mueva si hace falta.
+  if [[ "$PLATFORM" == "macos" ]]; then
+    nm_dir="$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
+  else
+    nm_dir="$HOME/.config/google-chrome/NativeMessagingHosts"
+  fi
   mkdir -p "$nm_dir"
   cp "$MANIFEST_OUT" "$nm_dir/${HOST_NAME}.json"
   echo "No se detectaron navegadores conocidos. Manifest escrito en:"
