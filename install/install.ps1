@@ -4,6 +4,27 @@
 # Uso (PowerShell):
 #   .\install.ps1                          # pide el ID de extensión
 #   .\install.ps1 -ExtensionId <id>       # con ID dado
+#
+# ---------------------------------------------------------------------------
+# ¿No te deja ejecutar el script? (error "no se puede cargar porque la
+# ejecución de scripts está deshabilitada en este sistema")
+#
+# Windows trae ExecutionPolicy restringida por defecto. Tres opciones:
+#
+#   A) Ejecutar esta vez sin cambiar la global (recomendado, solo esta sesión):
+#        powershell -ExecutionPolicy Bypass -File .\install.ps1
+#
+#   B) Desactivar la restricción SOLO en la sesión actual de PowerShell:
+#        Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+#        .\install.ps1
+#
+#   C) Permitir scripts para tu usuario de forma permanente:
+#        Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+#        .\install.ps1
+#
+#   (RemoteSigned permite scripts locales firmados/descargados; sigue
+#    requiriendo firma para scripts descargados de Internet.)
+# ---------------------------------------------------------------------------
 
 param(
     [Parameter(Mandatory=$false)]
@@ -14,7 +35,17 @@ $ErrorActionPreference = "Stop"
 $HostName = "com.wireguardext.host"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $ProjectDir = Split-Path -Parent $ScriptDir
-$HostBin = Join-Path $ProjectDir "host\wireguardext-host.exe"
+
+# --- Localizar el binario del host ---
+# Orden de busqueda:
+#   1. Mismo directorio que este script (como viene en el .zip de la release:
+#      el .exe va junto a install.ps1).
+#   2. ..\host\wireguardext-host.exe (arbol de desarrollo / compilacion local).
+#   3. Si no existe y hay Go, se compila desde las fuentes.
+$HostBin = Join-Path $ScriptDir "wireguardext-host.exe"
+if (-not (Test-Path $HostBin)) {
+    $HostBin = Join-Path $ProjectDir "host\wireguardext-host.exe"
+}
 
 # --- ID de extensión ---
 if (-not $ExtensionId) {
