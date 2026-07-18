@@ -133,9 +133,15 @@ La CWS asigna un **ID de extensión** al publicar (ej.
 El flujo de instalación del host ya lo gestiona:
 
 ```bash
-./install.sh <extension-id>      # Linux/macOS
-.\install.ps1                    # Windows (pide el ID)
+./install.sh <extension-id>                                    # Linux/macOS
+powershell -ExecutionPolicy Bypass -File .\install.ps1         # Windows (pide el ID)
 ```
+
+> En Windows el flag `-ExecutionPolicy Bypass` es necesario porque la
+> ejecución de scripts viene deshabilitada por defecto; sin él el usuario ve
+> «no se puede cargar porque la ejecución de scripts está deshabilitada en
+> este sistema». Alternativamente puede fijarlo una sola vez con
+> `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
 
 > **Nota sobre forzar un ID:** si quieres que el ID sea predecible *antes* de
 > subir la primera versión, puedes subir el `.zip` una vez, anotar el ID, y

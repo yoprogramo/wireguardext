@@ -103,7 +103,7 @@
     "message": "In the same folder, run: ./install.sh — it will ask for this extension's ID (shown below)."
   },
   "onboarding_step3_desc_windows": {
-    "message": "Right-click install.ps1 and choose “Run with PowerShell”. It will ask for this extension's ID (shown below)."
+    "message": "In the decompressed folder, open PowerShell and run: powershell -ExecutionPolicy Bypass -File .\\install.ps1 (this bypasses Windows' script restriction for this run only). It will ask for this extension's ID (shown below). If you get “running scripts is disabled”, that is the same restriction — the command above solves it."
   },
   "onboarding_extid_label": {
     "message": "Your extension ID (paste it when the installer asks):"

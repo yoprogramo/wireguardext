@@ -103,7 +103,7 @@
     "message": "En la misma carpeta, ejecuta: ./install.sh — pedirá el ID de esta extensión (se muestra más abajo)."
   },
   "onboarding_step3_desc_windows": {
-    "message": "Clic derecho sobre install.ps1 y elige «Ejecutar con PowerShell». Pedirá el ID de esta extensión (se muestra más abajo)."
+    "message": "En la carpeta descomprimida, abre PowerShell y ejecuta: powershell -ExecutionPolicy Bypass -File .\\install.ps1 (así saltas la restricción de scripts de Windows solo para esta ejecución). Pedirá el ID de esta extensión (se muestra más abajo). Si te sale «la ejecución de scripts está deshabilitada», es esa misma restricción; el comando anterior la resuelve."
   },
   "onboarding_extid_label": {
     "message": "Tu ID de extensión (pégalo cuando lo pida el instalador):"

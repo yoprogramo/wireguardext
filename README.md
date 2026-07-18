@@ -84,11 +84,13 @@ tar xzf wireguardext-host-linux-amd64-vX.Y.Z.tar.gz
 
 El instalador coloca el binario en `~/.local/share/wireguardext/`, genera el manifest de Native Messaging y lo registra en Chrome, Chromium, Edge, Brave y Vivaldi (los que detecte). No requiere root.
 
-**Windows** (PowerShell) — descomprime el zip y ejecuta:
+**Windows** (PowerShell) — descomprime el zip, abre PowerShell **en la carpeta descomprimida** y ejecuta:
 
 ```powershell
-.\install.ps1 -ExtensionId <ID_DE_LA_EXTENSION>
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -ExtensionId <ID_DE_LA_EXTENSION>
 ```
+
+> El flag `-ExecutionPolicy Bypass` es necesario porque Windows trae la ejecución de scripts deshabilitada por defecto; solo afecta a esta ejecución. Si prefieres no ponerlo, desbloquea el permiso para tu usuario con `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` (una sola vez) y luego lanza `.\install.ps1 -ExtensionId <ID>`. Si al ejecutar te aparece el error «no se puede cargar porque la ejecución de scripts está deshabilitada en este sistema», es exactamente esa restricción: usa el flag `Bypass` del primer comando.
 
 Registra el manifest en `HKCU` (no requiere administrador) para Chrome y Edge.
 
@@ -120,7 +122,7 @@ Usa los instaladores del repositorio (buscarán el binario recién compilado en 
 ./install/install.sh <ID_DE_LA_EXTENSION>
 
 # Windows (PowerShell)
-.\install\install.ps1 -ExtensionId <ID_DE_LA_EXTENSION>
+powershell -ExecutionPolicy Bypass -File .\install\install.ps1 -ExtensionId <ID_DE_LA_EXTENSION>
 ```
 
 ### Cargar la extensión
