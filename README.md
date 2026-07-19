@@ -131,6 +131,24 @@ Abre `chrome://extensions`, activa el **modo desarrollador**, **Cargar descompri
 
 > Para reempaquetar todo para distribución, consulta [Empaquetado para distribución](#empaquetado-para-distribución).
 
+## ID de extensión estable
+
+El ID de **WireGuardExt** es siempre **`ngfheojelhaaceelejicpkdfagmhkoam`**, tanto si la instalas desde la Chrome Web Store como si la cargas descomprimida (desde `extension/` o desde el `.zip` de una release).
+
+Esto se consigue incluyendo la **clave pública** de la extensión (`"key"`) en `extension/manifest.json`. Sin esa clave, Chrome calcularía el ID a partir de la ruta de la carpeta, dando un ID distinto en cada máquina o carpeta y obligando a reinstalar el host cada vez. Con la clave, el ID deriva de ella y queda fijo.
+
+Consecuencia práctica: **el host nativo se instala una sola vez** con ese ID y no hay que volver a registrarlo, aunque muevas la extensión de carpeta o la cargues en otro equipo (siendo en este el mismo manifest del host).
+
+```bash
+# Linux / macOS
+./install.sh ngfheojelhaaceelejicpkdfagmhkoam
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -ExtensionId ngfheojelhaaceelejicpkdfagmhkoam
+```
+
+> El campo `key` es la clave **pública**, no compromete la firma que hace Google de la extensión en la tienda. Al generar el `.zip` que se sube a la Chrome Web Store, `build/package.sh` elimina automáticamente `key` del manifest (la tienda rechazaría un paquete con `key` embebida); solo se conserva en el árbol de fuentes para fijar el ID en desarrollo y en el `.zip` de las releases para carga descomprimida.
+
 ## Uso
 
 1. Abre las opciones de la extensión (botón derecho en el icono → Opciones).

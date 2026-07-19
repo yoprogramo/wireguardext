@@ -4,6 +4,9 @@
   "short_name": "WireGuardExt",
   "version": "0.2.4",
   "description": "__MSG_ext_description__",
+
+  "_key_doc": "Clave pública de la extensión (extraída del .crx de la Chrome Web Store). Fija el ID de extensión a 'ngfheojelhaaceelejicpkdfagmhkoam' aunque se cargue descomprimida, para que el native messaging host no haya que reinstalarlo. Este campo se elimina del .zip que se sube a la tienda (ver build/package.sh).",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAutcLdaeMYOaXP7JLXbsfbcFZErH3eiUMdDdBCl1wtctyJa/m72AWDCWlECKsC33PX/NUMXGcNtK6WOwVwaqrUJC4XwChtsyMNnNNUigUlYPtKZy2MmpRktIcZH76l7mtiqvKNsH6fHmo13AuMtM9M/VY1FRlxG4YiUaPX3478+o3CFG0GvbTnB6WCNWga9AGqe2hBz7u+l88Bf0iTMs4qOCXXxqfe6YObj8qUln0nFOGsAF/86AYczN/20xYm0DoqMuyrg0ElAex+h+xwOBqSdndk4qJrsZ9Tq/mGirbz/3gA8AdxmTJZs4BLSG/gRtts5ZHMKXrakW1GL7G38ukZwIDAQAB",
   "default_locale": "en",
   "homepage_url": "https://github.com/yoprogramo/wireguardext",
   "author": "yoprogramo",

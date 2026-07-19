@@ -12,6 +12,9 @@ dist/
 # Metadato interno de herramientas
 .zcode/
 
+# Clave pública de la extensión (respaldo local; va embebida en manifest.json)
+.wireguardext-public-key.pem.txt
+
 # macOS / editor
 .DS_Store
 *.swp
