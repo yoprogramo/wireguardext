@@ -74,7 +74,7 @@ build_extension() {
   # El manifest del repo lleva "key" para fijar el ID en cargas descomprimidas,
   # pero la Chrome Web Store rechaza subir un .zip con key embebida (Google firma
   # el .crx con su propia clave). Empaquetamos desde un staging con un manifest
-  # temporal sin "key".
+  # temporal sin "key" ni "_key_doc".
   local staging="$DIST_DIR/staging-extension"
   rm -rf "$staging"
   mkdir -p "$staging"
@@ -83,6 +83,7 @@ build_extension() {
 import json, sys
 m = json.load(open('$staging/manifest.json'))
 m.pop('key', None)
+m.pop('_key_doc', None)
 json.dump(m, open('$staging/manifest.json', 'w'), indent=2, ensure_ascii=False)
 print('', file=open('$staging/manifest.json', 'a'))
 "
