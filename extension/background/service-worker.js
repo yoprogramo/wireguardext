@@ -16,9 +16,9 @@ async function updateIcon(connected) {
   try {
     await chrome.action.setIcon({
       path: {
-        16: `icons/icon-16${suffix}.png`,
-        48: `icons/icon-48${suffix}.png`,
-        128: `icons/icon-128${suffix}.png`,
+        16: chrome.runtime.getURL(`icons/icon-16${suffix}.png`),
+        48: chrome.runtime.getURL(`icons/icon-48${suffix}.png`),
+        128: chrome.runtime.getURL(`icons/icon-128${suffix}.png`),
       },
     });
   } catch (e) {

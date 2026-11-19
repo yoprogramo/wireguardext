@@ -25,8 +25,15 @@ async function setup({ connected = false, running = false } = {}) {
     getProfile: async () => ({ name: "test" }),
   };
   const chrome = {
-    action: { setIcon: async ({ path }) => { icons.push(path[16]); } },
+    action: { setIcon: async ({ path: paths }) => {
+      for (const [size, url] of Object.entries(paths)) {
+        assert.match(url, new RegExp(`^chrome-extension://test/icons/icon-${size}(-connected)?\\.png$`));
+        assert.equal(fs.existsSync(path.join(__dirname, "../extension", url.replace("chrome-extension://test/", ""))), true);
+      }
+      icons.push(paths[16]);
+    } },
     runtime: {
+      getURL: (file) => `chrome-extension://test/${file}`,
       onInstalled: { addListener() {} },
       onStartup: { addListener() {} },
       onMessage: { addListener(callback) { listener = callback; } },
@@ -59,22 +66,22 @@ async function setup({ connected = false, running = false } = {}) {
 
 test("connection and disconnection update the icon", async () => {
   const worker = await setup();
-  assert.equal(worker.icons.at(-1), "icons/icon-16.png");
+  assert.equal(worker.icons.at(-1), "chrome-extension://test/icons/icon-16.png");
   assert.equal((await worker.send({ command: "connect", profileId: "p" })).ok, true);
-  assert.equal(worker.icons.at(-1), "icons/icon-16-connected.png");
+  assert.equal(worker.icons.at(-1), "chrome-extension://test/icons/icon-16-connected.png");
   assert.equal((await worker.send({ command: "disconnect" })).ok, true);
-  assert.equal(worker.icons.at(-1), "icons/icon-16.png");
+  assert.equal(worker.icons.at(-1), "chrome-extension://test/icons/icon-16.png");
 });
 
 test("startup restores the icon only for a running tunnel", async () => {
   const active = await setup({ connected: true, running: true });
-  assert.equal(active.icons.at(-1), "icons/icon-16-connected.png");
+  assert.equal(active.icons.at(-1), "chrome-extension://test/icons/icon-16-connected.png");
   const stopped = await setup({ connected: true });
-  assert.equal(stopped.icons.at(-1), "icons/icon-16.png");
+  assert.equal(stopped.icons.at(-1), "chrome-extension://test/icons/icon-16.png");
 });
 
 test("losing the native host clears the connected icon", async () => {
   const worker = await setup({ connected: true, running: true });
   worker.disconnectHost();
-  assert.equal(worker.icons.at(-1), "icons/icon-16.png");
+  assert.equal(worker.icons.at(-1), "chrome-extension://test/icons/icon-16.png");
 });

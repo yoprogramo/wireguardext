@@ -64,6 +64,10 @@ Esta vía usa los binarios publicados en la página de [releases](https://github
 3. Abre `chrome://extensions`, activa el **modo desarrollador** y pulsa **Cargar descomprimida** → selecciona la carpeta del paso anterior.
 4. Copia el **ID** que aparece bajo el nombre de la extensión (32 caracteres). Lo necesitarás en el paso 2.
 
+El manifest del repositorio incluye una clave pública que fija el ID
+`ngfheojelhaaceelejicpkdfagmhkoam` para cargas descomprimidas; el paquete para
+la tienda omite esa clave.
+
 ### 2. Descargar y registrar el host nativo
 
 Descarga de [la misma release](https://github.com/yoprogramo/wireguardext/releases/latest) el paquete del host correspondiente a tu sistema operativo y arquitectura:
