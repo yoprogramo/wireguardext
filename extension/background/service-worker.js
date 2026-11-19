@@ -11,6 +11,21 @@ import * as storage from "../lib/storage.js";
 import * as native from "../lib/native.js";
 import { applyProxy, clearProxy } from "../lib/proxy.js";
 
+async function updateIcon(connected) {
+  const suffix = connected ? "-connected" : "";
+  try {
+    await chrome.action.setIcon({
+      path: {
+        16: `icons/icon-16${suffix}.png`,
+        48: `icons/icon-48${suffix}.png`,
+        128: `icons/icon-128${suffix}.png`,
+      },
+    });
+  } catch (e) {
+    console.error("No se pudo actualizar el icono:", e);
+  }
+}
+
 // --- Lifecycle ---
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -26,6 +41,7 @@ chrome.runtime.onStartup.addListener(() => {
 
 // También al cargar el SW por cualquier motivo (no solo onStartup/onInstalled),
 // porque MV3 puede matarlo y revivirlo en cualquier momento.
+updateIcon(false);
 native.init();
 reconcileAfterStartup();
 
@@ -56,6 +72,7 @@ async function reconcileAfterStartup() {
       // Caso nominal: el usuario quería estar conectado y el túnel vive.
       await applyProxy(st.socksPort);
       await storage.setState({ connected: true, proxyPort: st.socksPort });
+      await updateIcon(native.isConnected());
     } else if (state.connected && !hostRunning) {
       // El túnel murió (caída del host, reinicio del equipo, etc.).
       await storage.setState({ connected: false, proxyPort: null, activeProfileId: null });
@@ -102,11 +119,13 @@ async function handleCommand(message) {
       // Si el host nativo no está instalado, lo señalamos explícitamente para
       // que la UI pueda mostrar el onboarding en vez de un error genérico.
       if (native.isHostMissing()) {
+        await updateIcon(false);
         const state = await storage.getState();
         return { host: null, hostMissing: true, state };
       }
       const st = await native.status().catch(() => null);
       const state = await storage.getState();
+      await updateIcon(!!(state.connected && st?.running && st.socksPort && native.isConnected()));
       return { host: st, state };
     }
 
@@ -123,6 +142,7 @@ async function connect(profileId) {
   const profile = await storage.getProfile(profileId);
   if (!profile) throw new Error("Perfil no encontrado");
 
+  await updateIcon(false);
   // Si ya hay algo conectado, desconectar primero.
   const st = await native.status().catch(() => null);
   if (st?.running) {
@@ -143,11 +163,13 @@ async function connect(profileId) {
     connected: true,
   });
 
+  await updateIcon(native.isConnected());
   return { socksPort, profileName: profile.name };
 }
 
 /** Desconecta: para wireproxy y limpia el proxy del navegador. */
 async function disconnect() {
+  await updateIcon(false);
   await native.stop().catch(() => {});
   await clearProxy();
   await storage.setState({
@@ -162,6 +184,7 @@ native.subscribe((msg) => {
   if (msg.type === "log") {
     console.log(`[wireproxy ${msg.level}]`, msg.message);
   } else if (msg.type === "disconnected") {
+    updateIcon(false);
     console.warn("[host] desconectado");
   } else if (msg.type === "error") {
     console.error("[host] error:", msg.message);

@@ -70,6 +70,9 @@ jobs:
           python3 -c "import json; json.load(open('extension/manifest.json'))"
           python3 -c "import json; json.load(open('install/com.wireguardext.host.json'))"
 
+      - name: Tests de la extensión
+        run: node --experimental-vm-modules --test tests/*.test.cjs
+
       - name: Empaquetar extensión (zip)
         run: |
           mkdir -p dist

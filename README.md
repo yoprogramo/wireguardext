@@ -32,6 +32,10 @@ Para ello usa [wireproxy](https://github.com/windtf/wireproxy), un cliente WireG
 
 Solo el navegador pasa por la VPN; el resto de las conexiones del sistema quedan intactas.
 
+El icono de la barra del navegador es verde cuando el proxy VPN está activo y
+rojo cuando está desconectado o no se puede confirmar su estado. El color no
+verifica que se haya completado una negociación WireGuard con el servidor.
+
 ## Requisitos
 
 - **Chrome / Chromium / Edge** (u otro navegador basado en Chromium con soporte MV3).
